@@ -69,10 +69,24 @@ class StudiQApp {
 
     setupSetupEventListeners() {
         // Setup form event listener
-        document.getElementById('setup-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.completeSetup();
-        });
+        const setupForm = document.getElementById('setup-form');
+        if (setupForm) {
+            setupForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                console.log('Form submitted');
+                this.completeSetup();
+            });
+        }
+
+        // Setup button click listener as backup
+        const submitButton = document.getElementById('setup-submit');
+        if (submitButton) {
+            submitButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('Button clicked');
+                this.completeSetup();
+            });
+        }
 
         // Validate checkboxes
         const checkboxes = document.querySelectorAll('.setup-checkbox');
@@ -1156,5 +1170,20 @@ function resetAllData() {
     if (confirm('Are you sure you want to reset all data? This action cannot be undone.')) {
         localStorage.removeItem('studiq_data');
         location.reload();
+    }
+}
+
+// Global function to manually complete setup (for debugging)
+function manualSetup() {
+    const userName = document.getElementById('user-name').value.trim();
+    const privacyAccepted = document.getElementById('privacy-agree').checked;
+    const tosAccepted = document.getElementById('tos-agree').checked;
+    
+    console.log('Manual setup called:', { userName, privacyAccepted, tosAccepted });
+    
+    if (userName && privacyAccepted && tosAccepted) {
+        app.completeSetup();
+    } else {
+        console.log('Please fill in all fields and check both boxes');
     }
 } 
