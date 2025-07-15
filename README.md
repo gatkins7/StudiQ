@@ -1,342 +1,312 @@
 # StudiQ - AI-Powered Study Assistant
 
-A comprehensive web-based study application that harnesses the power of DeepSeek AI to revolutionize your learning experience. StudiQ provides intelligent quiz generation, flashcard creation, personalized study plans, task management, and an AI study assistant.
+[![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![DeepSeek](https://img.shields.io/badge/AI-DeepSeek-4285F4?style=for-the-badge&logo=openai&logoColor=white)](https://deepseek.com)
+
+> **Transform your learning experience with AI-powered study materials, interactive quizzes, and intelligent flashcards.**
+
+---
+
+## 🚀 Live Demo
+
+**🌐 [Try StudiQ Now](https://your-deployment-url.vercel.app)**
+
+---
 
 ## ✨ Features
 
-### 📊 **Dashboard**
+### 🏠 **Smart Dashboard**
+- Personal greeting and user profiles
 - Study statistics and progress tracking
 - Recent activity overview
 - Study streak monitoring
-- Performance metrics
+- Performance metrics and analytics
 
-### 🧠 **AI-Powered Quiz System**
-- Generate custom quizzes on any topic
-- Multiple difficulty levels (Easy, Medium, Hard)
-- Various question types (Multiple Choice, True/False)
-- Instant feedback and detailed explanations
-- Progress tracking and quiz history
+### 🧠 **AI-Powered Study Content Generation**
+- **Study Text**: Comprehensive summaries tailored to your needs
+- **Interactive Quizzes**: 10 AI-generated questions with instant feedback
+- **Smart Flashcards**: 15 cards with flip animations for effective memorization
+- **Difficulty Levels**: 🌱 Beginner, 📚 Intermediate, 🚀 Advanced
 
-### 🗂️ **Smart Flashcard System**
-- AI-generated flashcard sets
-- Interactive flip animations
-- Spaced repetition tracking
-- Difficulty rating system
-- Multiple study modes
-
-### 📅 **Intelligent Study Plans**
-- Personalized study schedules
-- Calendar integration
-- Progress tracking
-- Adaptive learning paths
-- Goal-oriented planning
-
-### ✅ **Task Management**
-- Create and organize study tasks
-- Priority levels and categories
-- Due date tracking
-- Progress monitoring
-- Completion statistics
+### 📚 **Study Library**
+- Save and organize all your study sets
+- Track completion status and quiz scores
+- Quick access to previous materials
+- Beautiful grid layout with material cards
 
 ### 🤖 **AI Study Assistant**
-- Real-time chat with AI tutor
-- Concept explanations
-- Study tips and strategies
-- Homework help
-- 24/7 availability
+- Real-time chat with intelligent AI tutor
+- Get explanations on any topic
+- Study tips and personalized recommendations
+- Context-aware responses based on your study history
 
-## 🚀 Quick Start
+### 🎨 **Modern UI/UX**
+- **Dark Theme**: Eye-friendly design with glass morphism
+- **Responsive Design**: Works perfectly on all devices
+- **Smooth Animations**: Engaging transitions and micro-interactions
+- **Intuitive Navigation**: Easy-to-use sidebar and content switching
 
-1. **Install dependencies:**
+---
+
+## 🛠️ Technology Stack
+
+| Component | Technology |
+|-----------|------------|
+| **Frontend** | HTML5, CSS3, Vanilla JavaScript |
+| **Backend** | Node.js, Express.js |
+| **AI Engine** | DeepSeek API |
+| **Deployment** | Vercel |
+| **Database** | LocalStorage (Client-side) |
+| **Styling** | Custom CSS with CSS Variables |
+
+---
+
+## 📦 Installation & Setup
+
+### Prerequisites
+- Node.js (version 18.0.0 or higher)
+- DeepSeek API key
+
+### Local Development
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/gatkins7/StudiQ.git
+   cd StudiQ
+   ```
+
+2. **Install dependencies**
    ```bash
    npm install
    ```
 
-2. **Start the server:**
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+   Edit `.env` and add your DeepSeek API key:
+   ```
+   DEEPSEEK_API_KEY=your_api_key_here
+   ```
+
+4. **Start the development server**
    ```bash
    npm start
    ```
 
-3. **Open StudiQ:**
-   Navigate to `http://localhost:3000` in your browser
-
-## 🔧 Configuration
-
-The application uses your provided DeepSeek API key: `sk-7b760952b5ad437f8d5da7ddcf16853a`
-
-To change the API key:
-- Set the `DEEPSEEK_API_KEY` environment variable, or
-- Modify the `DEEPSEEK_API_KEY` constant in `server.js`
-
-## 📖 How to Use StudiQ
-
-### 🎯 **Getting Started**
-1. Access the dashboard to see your study overview
-2. Navigate between sections using the sidebar
-3. All your progress is automatically saved
-
-### 🧠 **Creating Quizzes**
-1. Go to the **Quizzes** section
-2. Click "Generate Quiz"
-3. Enter your topic (e.g., "World War II", "Calculus", "Biology")
-4. Select difficulty and question count
-5. Take the quiz and get instant feedback
-
-### 🗂️ **Using Flashcards**
-1. Visit the **Flashcards** section
-2. Click "Generate Flashcards"
-3. Specify your topic and preferences
-4. Study with interactive flip cards
-5. Rate difficulty for spaced repetition
-
-### 📅 **Study Planning**
-1. Navigate to **Study Plan**
-2. Click "Create Study Plan"
-3. Enter subject, duration, and goals
-4. Follow your personalized schedule
-5. Track progress on the calendar
-
-### ✅ **Managing Tasks**
-1. Go to the **Tasks** section
-2. Click "Add Task"
-3. Set priority, due date, and category
-4. Check off completed tasks
-5. Monitor your productivity
-
-### 🤖 **AI Assistant**
-1. Access the **AI Assistant** section
-2. Ask questions about any topic
-3. Get explanations and study tips
-4. Request homework help
-5. Chat naturally with the AI
-
-## 🔍 API Endpoints
-
-StudiQ provides several REST API endpoints:
-
-### Chat Assistant
-- `POST /api/chat` - Send message to AI assistant
-
-### Quiz Generation
-- `POST /api/generate-quiz` - Generate custom quiz
-- `POST /api/study-suggestions` - Get personalized study suggestions
-
-### Flashcard System
-- `POST /api/generate-flashcards` - Create flashcard sets
-
-### Study Planning
-- `POST /api/generate-study-plan` - Create personalized study plans
-
-### Task Management
-- `POST /api/tasks` - Create new tasks
-
-### Utilities
-- `POST /api/explain-concept` - Get detailed concept explanations
-- `GET /api/health` - Check server health
-
-## 💾 Data Storage
-
-StudiQ uses localStorage for client-side data persistence:
-- Quiz history and results
-- Flashcard sets and progress
-- Study plans and schedules
-- Task lists and completion status
-- Chat conversation history
-
-## 🎨 User Interface
-
-### Modern Design
-- Gradient backgrounds and smooth animations
-- Responsive layout for all devices
-- Intuitive navigation and controls
-- Interactive elements and feedback
-
-### Accessibility
-- Clear typography and color contrast
-- Keyboard navigation support
-- Screen reader compatible
-- Mobile-friendly interface
-
-## 🛠️ Technical Stack
-
-### Backend
-- **Node.js** - Server runtime
-- **Express.js** - Web framework
-- **DeepSeek API** - AI intelligence
-- **UUID** - Unique identifier generation
-
-### Frontend
-- **Vanilla JavaScript** - Interactive functionality
-- **HTML5 & CSS3** - Modern web standards
-- **Font Awesome** - Icon library
-- **CSS Grid & Flexbox** - Responsive layouts
-
-### Features
-- **Real-time AI Integration** - Instant responses
-- **Local Storage** - Data persistence
-- **Responsive Design** - Mobile-first approach
-- **Progressive Enhancement** - Graceful degradation
-
-## 🔒 Security & Privacy
-
-- API keys are server-side only
-- No personal data stored remotely
-- Local storage for user preferences
-- Secure HTTPS recommended for production
-
-## 🚀 Deployment
-
-### Local Development
-```bash
-npm run dev  # Development with auto-reload
-```
-
-### Production
-```bash
-npm start    # Production server
-```
-
-### Environment Variables
-```bash
-PORT=3000
-DEEPSEEK_API_KEY=your_api_key_here
-```
-
-### Docker Support
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-EXPOSE 3000
-CMD ["npm", "start"]
-```
-
-## 📊 Performance
-
-StudiQ is optimized for:
-- **Fast Loading** - Minimal dependencies
-- **Smooth Animations** - Hardware acceleration
-- **Efficient API Usage** - Smart caching
-- **Responsive Interface** - Sub-second interactions
-
-## 🔧 Customization
-
-### Themes
-Modify CSS variables in `public/index.html` to customize colors and styling.
-
-### AI Behavior
-Adjust system prompts in `server.js` to modify AI assistant personality and responses.
-
-### Features
-Enable/disable features by modifying the frontend JavaScript in `public/app.js`.
-
-## 📱 Mobile Experience
-
-StudiQ is fully optimized for mobile devices:
-- Touch-friendly interface
-- Responsive navigation
-- Optimized for small screens
-- Gesture support for flashcards
-
-## 🎓 Educational Benefits
-
-### For Students
-- **Personalized Learning** - Adaptive content
-- **Progress Tracking** - Visual feedback
-- **Spaced Repetition** - Effective memorization
-- **Goal Setting** - Structured learning
-
-### For Educators
-- **Assessment Tools** - Quiz generation
-- **Progress Monitoring** - Student analytics
-- **Content Creation** - Automated materials
-- **Flexible Integration** - Easy deployment
-
-## 🆘 Troubleshooting
-
-### Common Issues
-
-1. **API Key Problems**
-   - Verify your DeepSeek API key is valid
-   - Check API usage limits
-   - Ensure network connectivity
-
-2. **Server Issues**
-   - Restart the server: `npm start`
-   - Check port availability: `lsof -i :3000`
-   - Review server logs for errors
-
-3. **Browser Issues**
-   - Clear browser cache
-   - Enable JavaScript
-   - Try in incognito mode
-
-4. **Data Loss**
-   - Check localStorage permissions
-   - Backup data regularly
-   - Use browser dev tools to inspect storage
-
-## 📞 Support
-
-For technical support:
-- Check browser console for errors
-- Review server logs
-- Verify API key validity
-- Test network connectivity
-
-## 🌟 Future Enhancements
-
-Potential future features:
-- **Multi-user Support** - Shared study groups
-- **Advanced Analytics** - Detailed progress reports
-- **Offline Mode** - Local AI processing
-- **Voice Integration** - Speech-to-text
-- **Gamification** - Achievements and rewards
-
-## 📄 License
-
-MIT License - Free to use, modify, and distribute!
-
-## 🌐 Deployment
-
-### Environment Variables Setup
-
-1. **Create environment file:**
-```bash
-cp .env.example .env
-```
-
-2. **Add your DeepSeek API key to `.env`:**
-```
-DEEPSEEK_API_KEY=your_actual_api_key_here
-```
-
-### Deploy to Vercel (Recommended)
-
-1. **Push to GitHub:**
-```bash
-git add .
-git commit -m "Initial commit"
-git push origin main
-```
-
-2. **Deploy on Vercel:**
-   - Go to [vercel.com](https://vercel.com) and sign up with GitHub
-   - Click "New Project" and select your repository
-   - Add environment variable: `DEEPSEEK_API_KEY` = `your_api_key_here`
-   - Click "Deploy"
-
-Your app will be live at `yourproject.vercel.app`!
-
-### Alternative Deployment Options
-- **Railway**: [railway.app](https://railway.app)
-- **Render**: [render.com](https://render.com)
-- **Heroku**: [heroku.com](https://heroku.com)
+5. **Open in browser**
+   ```
+   http://localhost:3000
+   ```
 
 ---
 
-**Happy Studying with StudiQ! 🎓✨**
+## 🚀 Deployment
 
-Transform your learning journey with AI-powered study tools designed for academic success. 
+### Deploy to Vercel
+
+1. **Push to GitHub** (if not already done)
+   ```bash
+   git add .
+   git commit -m "Initial commit"
+   git push origin main
+   ```
+
+2. **Deploy to Vercel**
+   - Go to [vercel.com](https://vercel.com)
+   - Import your GitHub repository
+   - Add environment variable: `DEEPSEEK_API_KEY`
+   - Deploy!
+
+### Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `DEEPSEEK_API_KEY` | Your DeepSeek API key for AI functionality | ✅ Yes |
+| `PORT` | Server port (auto-set by Vercel) | ❌ No |
+| `NODE_ENV` | Environment mode (auto-set by Vercel) | ❌ No |
+
+---
+
+## 📱 Usage
+
+### 1. **First-Time Setup**
+- Enter your name
+- Accept privacy policy and terms
+- Click "Get Started"
+
+### 2. **Create Study Set**
+- Click "Create Study Set" from dashboard
+- Enter title and description
+- Select difficulty level
+- Add focus areas (optional)
+- AI generates comprehensive materials
+
+### 3. **Study Flow**
+- **Read Study Text**: Comprehensive overview
+- **Practice with Flashcards**: Interactive flip cards
+- **Take Quiz**: 10 questions with instant feedback
+- **Review Results**: Track progress and scores
+
+### 4. **AI Assistant**
+- Ask questions about any topic
+- Get study tips and explanations
+- Receive personalized recommendations
+
+---
+
+## 🎯 Key Features in Detail
+
+### AI Study Generation
+- **Smart Content**: AI analyzes your topic and creates relevant study materials
+- **Adaptive Difficulty**: Content adjusts to your selected skill level
+- **Comprehensive Coverage**: Text, quiz, and flashcards all generated together
+
+### Interactive Quiz System
+- **10 Multiple Choice Questions** per study set
+- **Instant Feedback** with correct answer explanations
+- **Progress Tracking** with percentage scores
+- **Retake Capability** for practice
+
+### Flashcard System
+- **15 Cards** per study set
+- **Flip Animation** for engaging study experience
+- **Sequential Learning** with navigation controls
+- **Front/Back Design** for effective memorization
+
+### Study Library
+- **Persistent Storage** of all your study sets
+- **Completion Tracking** with quiz scores
+- **Easy Access** to previous materials
+- **Visual Organization** with card-based layout
+
+---
+
+## 🔧 API Endpoints
+
+### Study Set Generation
+```http
+POST /api/generate-study-set
+Content-Type: application/json
+
+{
+  "title": "Biology Basics",
+  "description": "Introduction to cell biology",
+  "difficulty": "intermediate",
+  "focus": "cell structure, organelles"
+}
+```
+
+### AI Chat Assistant
+```http
+POST /api/chat
+Content-Type: application/json
+
+{
+  "message": "Explain photosynthesis",
+  "conversation": []
+}
+```
+
+---
+
+## 🎨 Design Features
+
+### Visual Design
+- **Glass Morphism**: Modern translucent design elements
+- **Dark Theme**: Reduced eye strain with elegant dark interface
+- **Responsive Layout**: Perfect on desktop, tablet, and mobile
+- **Smooth Animations**: Engaging micro-interactions
+
+### User Experience
+- **Intuitive Navigation**: Clear sidebar with visual indicators
+- **Progressive Disclosure**: Information revealed as needed
+- **Consistent Patterns**: Familiar interactions throughout
+- **Accessibility**: Designed for all users
+
+---
+
+## 🔒 Privacy & Security
+
+- **Local Storage**: User data stored client-side
+- **Secure API**: Environment variables for sensitive data
+- **Privacy First**: No unnecessary data collection
+- **Transparent Terms**: Clear privacy policy and terms of service
+
+---
+
+## 🚧 Future Enhancements
+
+### Planned Features
+- [ ] User accounts and cloud sync
+- [ ] Collaborative study sets
+- [ ] Advanced analytics dashboard
+- [ ] Mobile app (React Native)
+- [ ] Multiple AI model support
+- [ ] Study reminders and notifications
+- [ ] Export to PDF/Anki
+- [ ] Voice-to-text input
+
+### Technical Improvements
+- [ ] Database integration (PostgreSQL)
+- [ ] Advanced caching strategies
+- [ ] Real-time multiplayer features
+- [ ] Offline functionality
+- [ ] Performance optimizations
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+### Development Setup
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+---
+
+## 👤 Author
+
+**Gregory Atkins**
+- GitHub: [@gatkins7](https://github.com/gatkins7)
+- Project: [StudiQ](https://github.com/gatkins7/StudiQ)
+
+---
+
+## 🙏 Acknowledgments
+
+- **DeepSeek AI** for powering the intelligent study generation
+- **Vercel** for seamless deployment and hosting
+- **Font Awesome** for beautiful icons
+- **Google Fonts** for the Inter font family
+
+---
+
+## 🔗 Links
+
+- [Live Demo](https://your-deployment-url.vercel.app)
+- [GitHub Repository](https://github.com/gatkins7/StudiQ)
+- [Documentation](https://github.com/gatkins7/StudiQ/wiki)
+- [Issue Tracker](https://github.com/gatkins7/StudiQ/issues)
+
+---
+
+<div align="center">
+
+### ⭐ If you find StudiQ helpful, please consider giving it a star!
+
+**Made with ❤️ and AI**
+
+</div> 
