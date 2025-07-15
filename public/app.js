@@ -56,83 +56,10 @@ class StudiQApp {
         const setupOverlay = document.getElementById('setup-overlay');
         setupOverlay.style.display = 'flex';
         
-        // Use setTimeout to ensure DOM is ready
-        setTimeout(() => {
-            this.initializeSetupForm();
-        }, 100);
-    }
-
-    initializeSetupForm() {
-        const setupForm = document.getElementById('setup-form');
-        const submitButton = document.getElementById('setup-submit');
-        const nameField = document.getElementById('user-name');
-        const privacyBox = document.getElementById('privacy-agree');
-        const tosBox = document.getElementById('tos-agree');
-
-        if (!setupForm || !submitButton || !nameField || !privacyBox || !tosBox) {
-            console.error('Setup form elements not found');
-            return;
-        }
-
-        // Remove existing event listeners by cloning elements
-        const newSubmitButton = submitButton.cloneNode(true);
-        submitButton.parentNode.replaceChild(newSubmitButton, submitButton);
-
-        // Add form submission handler
-        setupForm.onsubmit = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Form submitted via onsubmit');
-            this.handleSetupSubmission();
-            return false;
-        };
-
-        // Add button click handler
-        newSubmitButton.onclick = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Button clicked via onclick');
-            this.handleSetupSubmission();
-            return false;
-        };
-
-        // Add validation handlers
-        const validateForm = () => {
-            const nameValid = nameField.value.trim().length > 0;
-            const privacyValid = privacyBox.checked;
-            const tosValid = tosBox.checked;
-            
-            const allValid = nameValid && privacyValid && tosValid;
-            newSubmitButton.disabled = !allValid;
-            
-            console.log('Form validation:', { nameValid, privacyValid, tosValid, allValid });
-        };
-
-        nameField.oninput = validateForm;
-        privacyBox.onchange = validateForm;
-        tosBox.onchange = validateForm;
-
         // Initial validation
-        validateForm();
-    }
-
-    handleSetupSubmission() {
-        const nameField = document.getElementById('user-name');
-        const privacyBox = document.getElementById('privacy-agree');
-        const tosBox = document.getElementById('tos-agree');
-
-        const userName = nameField.value.trim();
-        const privacyAccepted = privacyBox.checked;
-        const tosAccepted = tosBox.checked;
-
-        console.log('Setup submission:', { userName, privacyAccepted, tosAccepted });
-
-        if (!userName || !privacyAccepted || !tosAccepted) {
-            this.showNotification('Please complete all required fields', 'error');
-            return;
-        }
-
-        this.completeSetup();
+        setTimeout(() => {
+            validateSetupForm();
+        }, 100);
     }
 
     hideSetupScreen() {
@@ -140,40 +67,7 @@ class StudiQApp {
         setupOverlay.style.display = 'none';
     }
 
-    completeSetup() {
-        const userName = document.getElementById('user-name').value.trim();
-        const privacyAccepted = document.getElementById('privacy-agree').checked;
-        const tosAccepted = document.getElementById('tos-agree').checked;
 
-        console.log('Setup completion:', { userName, privacyAccepted, tosAccepted });
-
-        if (!userName || !privacyAccepted || !tosAccepted) {
-            this.showNotification('Please complete all required fields', 'error');
-            return;
-        }
-
-        // Update user data
-        this.userData = {
-            name: userName,
-            setupComplete: true,
-            privacyAccepted: privacyAccepted,
-            tosAccepted: tosAccepted
-        };
-
-        // Save data to localStorage
-        this.saveData();
-        
-        // Hide setup screen
-        this.hideSetupScreen();
-        
-        // Update display
-        this.updateUserDisplay();
-        
-        // Show success message
-        this.showNotification(`Welcome to StudiQ, ${userName}! 🎉`, 'success');
-        
-        console.log('Setup completed successfully');
-    }
 
     updateUserDisplay() {
         const displayName = this.userData.name || 'Student';
@@ -1193,6 +1087,71 @@ function resetAllData() {
         localStorage.removeItem('studiq_data');
         location.reload();
     }
+}
+
+// Global setup form functions
+function validateSetupForm() {
+    const nameField = document.getElementById('user-name');
+    const privacyBox = document.getElementById('privacy-agree');
+    const tosBox = document.getElementById('tos-agree');
+    const submitButton = document.getElementById('setup-submit');
+    
+    if (!nameField || !privacyBox || !tosBox || !submitButton) {
+        return;
+    }
+    
+    const nameValid = nameField.value.trim().length > 0;
+    const privacyValid = privacyBox.checked;
+    const tosValid = tosBox.checked;
+    
+    const allValid = nameValid && privacyValid && tosValid;
+    submitButton.disabled = !allValid;
+    
+    console.log('Form validation:', { nameValid, privacyValid, tosValid, allValid });
+}
+
+function completeSetupProcess() {
+    const nameField = document.getElementById('user-name');
+    const privacyBox = document.getElementById('privacy-agree');
+    const tosBox = document.getElementById('tos-agree');
+    
+    if (!nameField || !privacyBox || !tosBox) {
+        console.error('Setup form elements not found');
+        return;
+    }
+    
+    const userName = nameField.value.trim();
+    const privacyAccepted = privacyBox.checked;
+    const tosAccepted = tosBox.checked;
+    
+    console.log('Setup completion:', { userName, privacyAccepted, tosAccepted });
+    
+    if (!userName || !privacyAccepted || !tosAccepted) {
+        app.showNotification('Please complete all required fields', 'error');
+        return;
+    }
+    
+    // Update user data
+    app.userData = {
+        name: userName,
+        setupComplete: true,
+        privacyAccepted: privacyAccepted,
+        tosAccepted: tosAccepted
+    };
+    
+    // Save data
+    app.saveData();
+    
+    // Hide setup screen
+    app.hideSetupScreen();
+    
+    // Update display
+    app.updateUserDisplay();
+    
+    // Show success message
+    app.showNotification(`Welcome to StudiQ, ${userName}! 🎉`, 'success');
+    
+    console.log('Setup completed successfully');
 }
 
  

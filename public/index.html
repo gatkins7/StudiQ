@@ -218,9 +218,12 @@
             cursor: pointer;
             transition: all var(--transition-medium);
             margin-top: 24px;
+            position: relative;
+            z-index: 100;
+            pointer-events: auto;
         }
 
-        .setup-button:hover {
+        .setup-button:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
         }
@@ -229,6 +232,13 @@
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
+            background: #666;
+        }
+
+        .setup-button:not(:disabled) {
+            opacity: 1;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
         }
 
         .container {
@@ -906,30 +916,30 @@
             <h1 class="setup-title">Welcome to StudiQ!</h1>
             <p class="setup-subtitle">Let's get you set up for success</p>
             
-            <form class="setup-form" id="setup-form">
+            <div class="setup-form">
                 <div class="setup-form-group">
                     <label class="setup-form-label">What's your name?</label>
-                    <input type="text" class="setup-form-input" id="user-name" placeholder="Enter your name">
+                    <input type="text" class="setup-form-input" id="user-name" placeholder="Enter your name" oninput="validateSetupForm()">
                 </div>
                 
                 <div class="setup-checkbox-group">
-                    <input type="checkbox" class="setup-checkbox" id="privacy-agree">
+                    <input type="checkbox" class="setup-checkbox" id="privacy-agree" onchange="validateSetupForm()">
                     <label class="setup-checkbox-label" for="privacy-agree">
                         I agree to the <a href="#" onclick="showPrivacyPolicy()">Privacy Policy</a>
                     </label>
                 </div>
                 
                 <div class="setup-checkbox-group">
-                    <input type="checkbox" class="setup-checkbox" id="tos-agree">
+                    <input type="checkbox" class="setup-checkbox" id="tos-agree" onchange="validateSetupForm()">
                     <label class="setup-checkbox-label" for="tos-agree">
                         I agree to the <a href="#" onclick="showTermsOfService()">Terms of Service</a>
                     </label>
                 </div>
                 
-                <button type="button" class="setup-button" id="setup-submit" disabled>
+                <button type="button" class="setup-button" id="setup-submit" disabled onclick="completeSetupProcess()">
                     Get Started
                 </button>
-            </form>
+            </div>
         </div>
     </div>
 
