@@ -14,9 +14,13 @@ const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions';
 // Check for required environment variables
 if (!DEEPSEEK_API_KEY) {
     console.error('❌ DEEPSEEK_API_KEY environment variable is required');
-    console.log('💡 Copy .env.example to .env and add your API key');
+    console.log('💡 Add DEEPSEEK_API_KEY to your deployment environment variables');
     console.log('🔗 Get your API key from: https://platform.deepseek.com/');
-    process.exit(1);
+    
+    // For development, exit. For production, we'll handle this in the endpoints
+    if (process.env.NODE_ENV !== 'production') {
+        process.exit(1);
+    }
 }
 
 // Middleware
