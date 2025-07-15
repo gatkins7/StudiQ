@@ -1,18 +1,20 @@
 {
-  "name": "studiq-app",
+  "name": "studiq",
   "version": "1.0.0",
   "description": "AI-Powered Study Assistant",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "deepseek-api": "^1.0.0"
   },
+  "keywords": ["study", "ai", "education"],
+  "author": "StudiQ Team",
+  "license": "MIT",
   "engines": {
-    "node": ">=18.0.0"
+    "node": "18.0.0"
   },
-  "author": "Gregory Atkins",
-  "license": "MIT"
+  "buildTimestamp": "2025-01-15T19:05:00.000Z"
 } 
