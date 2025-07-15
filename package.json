@@ -7,14 +7,19 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "deepseek-api": "^1.0.0"
+    "deepseek-api": "^1.0.0",
+    "dotenv": "^17.2.0",
+    "express": "^4.18.2"
   },
-  "keywords": ["study", "ai", "education"],
+  "keywords": [
+    "study",
+    "ai",
+    "education"
+  ],
   "author": "StudiQ Team",
   "license": "MIT",
   "engines": {
     "node": "18.0.0"
   },
   "buildTimestamp": "2025-01-15T19:05:00.000Z"
-} 
+}
