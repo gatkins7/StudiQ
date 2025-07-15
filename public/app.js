@@ -56,9 +56,29 @@ class StudiQApp {
         const setupOverlay = document.getElementById('setup-overlay');
         setupOverlay.style.display = 'flex';
         
-        // Initial validation
+        // Set up event listeners for setup form
         setTimeout(() => {
-            validateSetupForm();
+            const nameField = document.getElementById('user-name');
+            const privacyBox = document.getElementById('privacy-agree');
+            const tosBox = document.getElementById('tos-agree');
+            const submitButton = document.getElementById('setup-submit');
+            
+            if (nameField && privacyBox && tosBox && submitButton) {
+                // Add event listeners as backup
+                nameField.addEventListener('input', validateSetupForm);
+                nameField.addEventListener('keyup', validateSetupForm);
+                privacyBox.addEventListener('change', validateSetupForm);
+                tosBox.addEventListener('change', validateSetupForm);
+                
+                // Add click handler as backup
+                submitButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    completeSetupProcess();
+                });
+                
+                // Initial validation
+                validateSetupForm();
+            }
         }, 100);
     }
 
@@ -1097,6 +1117,7 @@ function validateSetupForm() {
     const submitButton = document.getElementById('setup-submit');
     
     if (!nameField || !privacyBox || !tosBox || !submitButton) {
+        console.error('Setup form elements not found');
         return;
     }
     
@@ -1105,7 +1126,21 @@ function validateSetupForm() {
     const tosValid = tosBox.checked;
     
     const allValid = nameValid && privacyValid && tosValid;
+    
+    // Enable/disable button and update styling
     submitButton.disabled = !allValid;
+    
+    if (allValid) {
+        submitButton.style.opacity = '1';
+        submitButton.style.cursor = 'pointer';
+        submitButton.style.background = 'linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%)';
+        submitButton.style.pointerEvents = 'auto';
+    } else {
+        submitButton.style.opacity = '0.6';
+        submitButton.style.cursor = 'not-allowed';
+        submitButton.style.background = '#666';
+        submitButton.style.pointerEvents = 'none';
+    }
     
     console.log('Form validation:', { nameValid, privacyValid, tosValid, allValid });
 }
@@ -1114,9 +1149,16 @@ function completeSetupProcess() {
     const nameField = document.getElementById('user-name');
     const privacyBox = document.getElementById('privacy-agree');
     const tosBox = document.getElementById('tos-agree');
+    const submitButton = document.getElementById('setup-submit');
     
     if (!nameField || !privacyBox || !tosBox) {
         console.error('Setup form elements not found');
+        return;
+    }
+    
+    // Check if button is disabled
+    if (submitButton.disabled) {
+        console.log('Button is disabled, cannot proceed');
         return;
     }
     
