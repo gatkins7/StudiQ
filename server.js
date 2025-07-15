@@ -1,8 +1,5 @@
 const express = require('express');
-const cors = require('cors');
 const path = require('path');
-const { v4: uuidv4 } = require('uuid');
-require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,22 +8,19 @@ const PORT = process.env.PORT || 3000;
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions';
 
-// Check for required environment variables
-if (!DEEPSEEK_API_KEY) {
-    console.error('❌ DEEPSEEK_API_KEY environment variable is required');
-    console.log('💡 Add DEEPSEEK_API_KEY to your deployment environment variables');
-    console.log('🔗 Get your API key from: https://platform.deepseek.com/');
-    
-    // For development, exit. For production, we'll handle this in the endpoints
-    if (process.env.NODE_ENV !== 'production') {
-        process.exit(1);
-    }
-}
-
 // Middleware
-app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static('public'));
+
+// Add error handling middleware
+app.use((err, req, res, next) => {
+    console.error('Server error:', err);
+    res.status(500).json({ 
+        success: false, 
+        error: 'Internal server error',
+        message: err.message 
+    });
+});
 
 // Serve the main HTML file
 app.get('/', (req, res) => {
@@ -36,6 +30,10 @@ app.get('/', (req, res) => {
 // Helper function to call DeepSeek API
 async function callDeepSeekAPI(messages, temperature = 0.7, maxTokens = 2048) {
     try {
+        if (!DEEPSEEK_API_KEY) {
+            throw new Error('DEEPSEEK_API_KEY environment variable is not set');
+        }
+
         const response = await fetch(DEEPSEEK_API_URL, {
             method: 'POST',
             headers: {
@@ -52,7 +50,8 @@ async function callDeepSeekAPI(messages, temperature = 0.7, maxTokens = 2048) {
         });
 
         if (!response.ok) {
-            throw new Error(`API Error: ${response.status}`);
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(`API Error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
         }
 
         const data = await response.json();
@@ -318,7 +317,7 @@ Make sure:
             }
             
             // Add metadata
-            quizData.id = uuidv4();
+            quizData.id = Date.now().toString();
             quizData.createdAt = new Date().toISOString();
             
             res.json(quizData);
@@ -388,7 +387,7 @@ Make sure:
             }
             
             // Add metadata
-            flashcardData.id = uuidv4();
+            flashcardData.id = Date.now().toString();
             flashcardData.createdAt = new Date().toISOString();
             
             res.json(flashcardData);
@@ -464,7 +463,7 @@ Make it practical, progressive, and achievable.`;
             const studyPlanData = JSON.parse(cleanedResponse);
             
             // Add metadata
-            studyPlanData.id = uuidv4();
+            studyPlanData.id = Date.now().toString();
             studyPlanData.createdAt = new Date().toISOString();
             
             res.json(studyPlanData);
@@ -490,7 +489,7 @@ app.post('/api/tasks', (req, res) => {
         }
 
         const task = {
-            id: uuidv4(),
+            id: Date.now().toString(),
             title,
             description: description || '',
             dueDate: dueDate || null,
@@ -595,12 +594,18 @@ app.get('/api/health', (req, res) => {
     res.json({ 
         status: 'healthy', 
         timestamp: new Date().toISOString(),
-        apiKey: DEEPSEEK_API_KEY.substring(0, 10) + '...'
+        apiKey: DEEPSEEK_API_KEY ? DEEPSEEK_API_KEY.substring(0, 10) + '...' : 'not set'
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`🎓 StudiQ running on http://localhost:${PORT}`);
-    console.log(`📚 AI-powered study assistant ready!`);
-    console.log(`🔑 Using DeepSeek API key: ${DEEPSEEK_API_KEY.substring(0, 10)}...`);
-}); 
+// Start server (for local development)
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`🎓 StudiQ running on http://localhost:${PORT}`);
+        console.log(`📚 AI-powered study assistant ready!`);
+        console.log(`🔑 Using DeepSeek API key: ${DEEPSEEK_API_KEY ? DEEPSEEK_API_KEY.substring(0, 10) + '...' : 'not set'}`);
+    });
+}
+
+// Export for Vercel
+module.exports = app; 
