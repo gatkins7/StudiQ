@@ -28,6 +28,7 @@ class StudiQApp {
             privacyAccepted: false,
             tosAccepted: false
         };
+        this.setupEventListenersAdded = false;
         
         this.initializeApp();
     }
@@ -56,6 +57,17 @@ class StudiQApp {
         const setupOverlay = document.getElementById('setup-overlay');
         setupOverlay.style.display = 'flex';
         
+        // Only add event listeners if they haven't been added yet
+        if (!this.setupEventListenersAdded) {
+            this.setupSetupEventListeners();
+            this.setupEventListenersAdded = true;
+        }
+        
+        // Reset form validation
+        this.validateSetupForm();
+    }
+
+    setupSetupEventListeners() {
         // Setup form event listener
         document.getElementById('setup-form').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -64,24 +76,27 @@ class StudiQApp {
 
         // Validate checkboxes
         const checkboxes = document.querySelectorAll('.setup-checkbox');
-        const submitButton = document.getElementById('setup-submit');
-        
         checkboxes.forEach(checkbox => {
             checkbox.addEventListener('change', () => {
-                const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-                const nameField = document.getElementById('user-name');
-                const nameValid = nameField.value.trim().length > 0;
-                
-                submitButton.disabled = !(allChecked && nameValid);
+                this.validateSetupForm();
             });
         });
 
         // Name field validation
-        document.getElementById('user-name').addEventListener('input', (e) => {
-            const nameValid = e.target.value.trim().length > 0;
-            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-            submitButton.disabled = !(allChecked && nameValid);
+        document.getElementById('user-name').addEventListener('input', () => {
+            this.validateSetupForm();
         });
+    }
+
+    validateSetupForm() {
+        const checkboxes = document.querySelectorAll('.setup-checkbox');
+        const submitButton = document.getElementById('setup-submit');
+        const nameField = document.getElementById('user-name');
+        
+        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+        const nameValid = nameField.value.trim().length > 0;
+        
+        submitButton.disabled = !(allChecked && nameValid);
     }
 
     hideSetupScreen() {
@@ -94,11 +109,14 @@ class StudiQApp {
         const privacyAccepted = document.getElementById('privacy-agree').checked;
         const tosAccepted = document.getElementById('tos-agree').checked;
 
+        console.log('Setup completion:', { userName, privacyAccepted, tosAccepted });
+
         if (!userName || !privacyAccepted || !tosAccepted) {
             this.showNotification('Please complete all required fields', 'error');
             return;
         }
 
+        // Update user data
         this.userData = {
             name: userName,
             setupComplete: true,
@@ -106,10 +124,19 @@ class StudiQApp {
             tosAccepted: tosAccepted
         };
 
+        // Save data to localStorage
         this.saveData();
+        
+        // Hide setup screen
         this.hideSetupScreen();
+        
+        // Update display
         this.updateUserDisplay();
+        
+        // Show success message
         this.showNotification(`Welcome to StudiQ, ${userName}! 🎉`, 'success');
+        
+        console.log('Setup completed successfully');
     }
 
     updateUserDisplay() {
@@ -1015,6 +1042,9 @@ class StudiQApp {
             this.chatConversation = parsedData.chatConversation || [];
             this.settings = { ...this.settings, ...parsedData.settings };
             this.userData = { ...this.userData, ...parsedData.userData };
+            console.log('Data loaded:', { userData: this.userData });
+        } else {
+            console.log('No existing data found');
         }
     }
 }
