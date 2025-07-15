@@ -1258,5 +1258,94 @@
     </div>
 
     <script src="app.js"></script>
+    
+    <!-- Bulletproof Setup Form Fix -->
+    <script>
+        // This script runs after everything is loaded to ensure setup form works
+        window.addEventListener('load', function() {
+            console.log('🔧 Running setup form fix...');
+            
+            function setupFormFix() {
+                const nameField = document.getElementById('user-name');
+                const privacyBox = document.getElementById('privacy-agree');
+                const tosBox = document.getElementById('tos-agree');
+                const submitButton = document.getElementById('setup-submit');
+                
+                if (!nameField || !privacyBox || !tosBox || !submitButton) {
+                    console.log('❌ Setup elements not found');
+                    return;
+                }
+                
+                console.log('✅ Setup elements found, adding fix...');
+                
+                function validateAndEnable() {
+                    const nameValid = nameField.value.trim().length > 0;
+                    const privacyValid = privacyBox.checked;
+                    const tosValid = tosBox.checked;
+                    const allValid = nameValid && privacyValid && tosValid;
+                    
+                    submitButton.disabled = !allValid;
+                    
+                    if (allValid) {
+                        submitButton.style.opacity = '1';
+                        submitButton.style.cursor = 'pointer';
+                        submitButton.style.background = 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)';
+                        submitButton.style.pointerEvents = 'auto';
+                    } else {
+                        submitButton.style.opacity = '0.6';
+                        submitButton.style.cursor = 'not-allowed';
+                        submitButton.style.background = '#666';
+                        submitButton.style.pointerEvents = 'none';
+                    }
+                    
+                    console.log('Validation:', { nameValid, privacyValid, tosValid, allValid });
+                }
+                
+                function completeSetup() {
+                    if (submitButton.disabled) return;
+                    
+                    const userName = nameField.value.trim();
+                    console.log('🚀 Setup completing for:', userName);
+                    
+                    // Update app data if available
+                    if (window.app) {
+                        app.userData = {
+                            name: userName,
+                            setupComplete: true,
+                            privacyAccepted: privacyBox.checked,
+                            tosAccepted: tosBox.checked
+                        };
+                        app.saveData();
+                        app.hideSetupScreen();
+                        app.updateUserDisplay();
+                        app.showNotification(`Welcome to StudiQ, ${userName}! 🎉`, 'success');
+                    } else {
+                        // Fallback if app not available
+                        document.getElementById('setup-overlay').style.display = 'none';
+                        alert(`Welcome to StudiQ, ${userName}!`);
+                    }
+                }
+                
+                // Remove any existing listeners and add new ones
+                nameField.removeEventListener('input', validateAndEnable);
+                privacyBox.removeEventListener('change', validateAndEnable);
+                tosBox.removeEventListener('change', validateAndEnable);
+                submitButton.removeEventListener('click', completeSetup);
+                
+                nameField.addEventListener('input', validateAndEnable);
+                privacyBox.addEventListener('change', validateAndEnable);
+                tosBox.addEventListener('change', validateAndEnable);
+                submitButton.addEventListener('click', completeSetup);
+                
+                // Initial validation
+                validateAndEnable();
+                
+                console.log('✅ Setup form fix applied successfully');
+            }
+            
+            // Run the fix
+            setupFormFix();
+        });
+    </script>
 </body>
 </html> 
