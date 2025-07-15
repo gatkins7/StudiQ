@@ -28,7 +28,6 @@ class StudiQApp {
             privacyAccepted: false,
             tosAccepted: false
         };
-        this.setupEventListenersAdded = false;
         
         this.initializeApp();
     }
@@ -57,60 +56,83 @@ class StudiQApp {
         const setupOverlay = document.getElementById('setup-overlay');
         setupOverlay.style.display = 'flex';
         
-        // Only add event listeners if they haven't been added yet
-        if (!this.setupEventListenersAdded) {
-            this.setupSetupEventListeners();
-            this.setupEventListenersAdded = true;
-        }
-        
-        // Reset form validation
-        this.validateSetupForm();
+        // Use setTimeout to ensure DOM is ready
+        setTimeout(() => {
+            this.initializeSetupForm();
+        }, 100);
     }
 
-    setupSetupEventListeners() {
-        // Setup form event listener
+    initializeSetupForm() {
         const setupForm = document.getElementById('setup-form');
-        if (setupForm) {
-            setupForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                console.log('Form submitted');
-                this.completeSetup();
-            });
-        }
-
-        // Setup button click listener as backup
-        const submitButton = document.getElementById('setup-submit');
-        if (submitButton) {
-            submitButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                console.log('Button clicked');
-                this.completeSetup();
-            });
-        }
-
-        // Validate checkboxes
-        const checkboxes = document.querySelectorAll('.setup-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', () => {
-                this.validateSetupForm();
-            });
-        });
-
-        // Name field validation
-        document.getElementById('user-name').addEventListener('input', () => {
-            this.validateSetupForm();
-        });
-    }
-
-    validateSetupForm() {
-        const checkboxes = document.querySelectorAll('.setup-checkbox');
         const submitButton = document.getElementById('setup-submit');
         const nameField = document.getElementById('user-name');
-        
-        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-        const nameValid = nameField.value.trim().length > 0;
-        
-        submitButton.disabled = !(allChecked && nameValid);
+        const privacyBox = document.getElementById('privacy-agree');
+        const tosBox = document.getElementById('tos-agree');
+
+        if (!setupForm || !submitButton || !nameField || !privacyBox || !tosBox) {
+            console.error('Setup form elements not found');
+            return;
+        }
+
+        // Remove existing event listeners by cloning elements
+        const newSubmitButton = submitButton.cloneNode(true);
+        submitButton.parentNode.replaceChild(newSubmitButton, submitButton);
+
+        // Add form submission handler
+        setupForm.onsubmit = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Form submitted via onsubmit');
+            this.handleSetupSubmission();
+            return false;
+        };
+
+        // Add button click handler
+        newSubmitButton.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Button clicked via onclick');
+            this.handleSetupSubmission();
+            return false;
+        };
+
+        // Add validation handlers
+        const validateForm = () => {
+            const nameValid = nameField.value.trim().length > 0;
+            const privacyValid = privacyBox.checked;
+            const tosValid = tosBox.checked;
+            
+            const allValid = nameValid && privacyValid && tosValid;
+            newSubmitButton.disabled = !allValid;
+            
+            console.log('Form validation:', { nameValid, privacyValid, tosValid, allValid });
+        };
+
+        nameField.oninput = validateForm;
+        privacyBox.onchange = validateForm;
+        tosBox.onchange = validateForm;
+
+        // Initial validation
+        validateForm();
+    }
+
+    handleSetupSubmission() {
+        const nameField = document.getElementById('user-name');
+        const privacyBox = document.getElementById('privacy-agree');
+        const tosBox = document.getElementById('tos-agree');
+
+        const userName = nameField.value.trim();
+        const privacyAccepted = privacyBox.checked;
+        const tosAccepted = tosBox.checked;
+
+        console.log('Setup submission:', { userName, privacyAccepted, tosAccepted });
+
+        if (!userName || !privacyAccepted || !tosAccepted) {
+            this.showNotification('Please complete all required fields', 'error');
+            return;
+        }
+
+        this.completeSetup();
     }
 
     hideSetupScreen() {
@@ -1173,17 +1195,4 @@ function resetAllData() {
     }
 }
 
-// Global function to manually complete setup (for debugging)
-function manualSetup() {
-    const userName = document.getElementById('user-name').value.trim();
-    const privacyAccepted = document.getElementById('privacy-agree').checked;
-    const tosAccepted = document.getElementById('tos-agree').checked;
-    
-    console.log('Manual setup called:', { userName, privacyAccepted, tosAccepted });
-    
-    if (userName && privacyAccepted && tosAccepted) {
-        app.completeSetup();
-    } else {
-        console.log('Please fill in all fields and check both boxes');
-    }
-} 
+ 

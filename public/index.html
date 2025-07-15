@@ -909,24 +909,24 @@
             <form class="setup-form" id="setup-form">
                 <div class="setup-form-group">
                     <label class="setup-form-label">What's your name?</label>
-                    <input type="text" class="setup-form-input" id="user-name" placeholder="Enter your name" required>
+                    <input type="text" class="setup-form-input" id="user-name" placeholder="Enter your name">
                 </div>
                 
                 <div class="setup-checkbox-group">
-                    <input type="checkbox" class="setup-checkbox" id="privacy-agree" required>
+                    <input type="checkbox" class="setup-checkbox" id="privacy-agree">
                     <label class="setup-checkbox-label" for="privacy-agree">
                         I agree to the <a href="#" onclick="showPrivacyPolicy()">Privacy Policy</a>
                     </label>
                 </div>
                 
                 <div class="setup-checkbox-group">
-                    <input type="checkbox" class="setup-checkbox" id="tos-agree" required>
+                    <input type="checkbox" class="setup-checkbox" id="tos-agree">
                     <label class="setup-checkbox-label" for="tos-agree">
                         I agree to the <a href="#" onclick="showTermsOfService()">Terms of Service</a>
                     </label>
                 </div>
                 
-                <button type="submit" class="setup-button" id="setup-submit">
+                <button type="button" class="setup-button" id="setup-submit" disabled>
                     Get Started
                 </button>
             </form>
