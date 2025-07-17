@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🎓 StudiQ - AI-Powered Study Assistant
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/gatkins7/StudiQ)
@@ -203,3 +204,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Made with ❤️ for students, educators, and lifelong learners**
 
 *Transform your learning experience with AI-powered study materials!* 
+=======
+# StudiQ
+A comprehensive web application that transforms learning with AI-generated study materials and intelligent progress tracking.
+>>>>>>> d27c7168134d41e9d217885a1f10cb542b563732
