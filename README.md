@@ -73,45 +73,6 @@
 - **Responsive Design** - Works perfectly on all devices
 - **Smooth Animations** - Polished interactions throughout
 
-## 🚀 Deployment
-
-### **Deploy to Vercel (Recommended)**
-
-1. **One-click deploy**
-   [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/gatkins7/StudiQ)
-
-2. **Manual deployment**
-   ```bash
-   # Install Vercel CLI
-   npm i -g vercel
-   
-   # Deploy to Vercel
-   vercel
-   
-   # Follow the prompts to configure your deployment
-   ```
-
-3. **Environment Variables**
-   Add your `DEEPSEEK_API_KEY` in the Vercel dashboard under Settings → Environment Variables
-
-### **Other Platforms**
-- **Netlify** - Works with minor configuration
-- **Railway** - Direct deployment support
-- **Heroku** - Add Procfile for deployment
-
-## 🔧 Configuration
-
-### **Environment Variables**
-```bash
-DEEPSEEK_API_KEY=your_deepseek_api_key    # Required for AI features
-PORT=8000                                 # Server port (optional)
-```
-
-### **API Rate Limits**
-- DeepSeek API has generous rate limits for personal use
-- Consider upgrading for production applications
-- Implement caching for frequently accessed content
-
 ## 🤝 Contributing
 
 We welcome contributions! Here's how to get started:
