@@ -1,27 +1,20 @@
-require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
+require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8000;
 
 // DeepSeek API configuration
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || 'sk-7b760952b5ad437f8d5da7ddcf16853a';
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions';
 
 // Middleware
+app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static('public'));
-
-// Add error handling middleware
-app.use((err, req, res, next) => {
-    console.error('Server error:', err);
-    res.status(500).json({ 
-        success: false, 
-        error: 'Internal server error',
-        message: err.message 
-    });
-});
 
 // Serve the main HTML file
 app.get('/', (req, res) => {
@@ -31,10 +24,6 @@ app.get('/', (req, res) => {
 // Helper function to call DeepSeek API
 async function callDeepSeekAPI(messages, temperature = 0.7, maxTokens = 2048) {
     try {
-        if (!DEEPSEEK_API_KEY) {
-            throw new Error('DEEPSEEK_API_KEY environment variable is not set');
-        }
-
         const response = await fetch(DEEPSEEK_API_URL, {
             method: 'POST',
             headers: {
@@ -51,8 +40,7 @@ async function callDeepSeekAPI(messages, temperature = 0.7, maxTokens = 2048) {
         });
 
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(`API Error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+            throw new Error(`API Error: ${response.status}`);
         }
 
         const data = await response.json();
@@ -133,14 +121,17 @@ app.post('/api/generate-study-set', async (req, res) => {
             content: textPrompt
         }], 0.3, 2048);
         
-        // Step 2: Generate Quiz Questions
+        // Step 2: Generate Enhanced Quiz Questions
         const quizPrompt = `Based on the study material about "${title}" (${description}), create exactly 10 multiple-choice quiz questions.
         
         Difficulty level: ${difficulty}
         
+        Create 10 multiple-choice questions (4 options each) that test understanding of key concepts.
+        
         Return ONLY a JSON array of quiz questions in this exact format:
         [
             {
+                "type": "multiple-choice",
                 "question": "Question text here?",
                 "options": ["Option A", "Option B", "Option C", "Option D"],
                 "correctAnswer": 0
@@ -148,10 +139,12 @@ app.post('/api/generate-study-set', async (req, res) => {
         ]
         
         Requirements:
-        - Each question must have exactly 4 options
-        - correctAnswer must be the index (0-3) of the correct option
-        - Questions should test understanding of key concepts
-        - Make sure questions are appropriate for ${difficulty} level
+        - All questions must be multiple-choice with exactly 4 options
+        - correctAnswer is the index (0-3) of the correct option
+        - Questions should test understanding of key concepts from the study material
+        - Make options plausible but clearly distinguish the correct answer
+        - Vary question difficulty appropriately for ${difficulty} level
+        - Cover different aspects of the topic
         - Return ONLY the JSON array, no other text or formatting`;
         
         const quizResponse = await callDeepSeekAPI([{
@@ -197,11 +190,20 @@ app.post('/api/generate-study-set', async (req, res) => {
             throw new Error('Invalid flashcard format generated');
         }
         
-        // Validate quiz structure
+        // Validate quiz structure - all questions should be multiple choice
         for (const question of quiz) {
-            if (!question.question || !question.options || !Array.isArray(question.options) || 
+            if (!question.question || !question.type) {
+                throw new Error('Invalid quiz question structure: missing question or type');
+            }
+            
+            // All questions must be multiple choice
+            if (question.type !== 'multiple-choice') {
+                throw new Error('All quiz questions must be multiple-choice');
+            }
+            
+            if (!question.options || !Array.isArray(question.options) || 
                 question.options.length !== 4 || typeof question.correctAnswer !== 'number') {
-                throw new Error('Invalid quiz question structure');
+                throw new Error('Invalid multiple-choice question structure');
             }
         }
         
@@ -318,7 +320,7 @@ Make sure:
             }
             
             // Add metadata
-            quizData.id = Date.now().toString();
+            quizData.id = uuidv4();
             quizData.createdAt = new Date().toISOString();
             
             res.json(quizData);
@@ -388,7 +390,7 @@ Make sure:
             }
             
             // Add metadata
-            flashcardData.id = Date.now().toString();
+            flashcardData.id = uuidv4();
             flashcardData.createdAt = new Date().toISOString();
             
             res.json(flashcardData);
@@ -464,7 +466,7 @@ Make it practical, progressive, and achievable.`;
             const studyPlanData = JSON.parse(cleanedResponse);
             
             // Add metadata
-            studyPlanData.id = Date.now().toString();
+            studyPlanData.id = uuidv4();
             studyPlanData.createdAt = new Date().toISOString();
             
             res.json(studyPlanData);
@@ -490,7 +492,7 @@ app.post('/api/tasks', (req, res) => {
         }
 
         const task = {
-            id: Date.now().toString(),
+            id: uuidv4(),
             title,
             description: description || '',
             dueDate: dueDate || null,
@@ -590,23 +592,75 @@ Make it educational and easy to understand.`;
 });
 
 
+// AI Answer Grading Endpoint
+app.post('/api/grade-answer', async (req, res) => {
+    try {
+        const { question, expectedAnswer, keywords, userAnswer } = req.body;
+
+        if (!question || !userAnswer) {
+            return res.status(400).json({ error: 'Question and user answer are required' });
+        }
+
+        const gradingPrompt = `You are an AI teacher grading a short answer question. 
+
+Question: "${question}"
+Expected Answer: "${expectedAnswer}"
+Key Concepts: ${keywords ? keywords.join(', ') : 'Not specified'}
+Student Answer: "${userAnswer}"
+
+Grade the student's answer on a scale of 0.0 to 1.0 where:
+- 1.0 = Perfect answer, demonstrates complete understanding
+- 0.8-0.9 = Very good, covers most key points with minor gaps
+- 0.6-0.7 = Good, shows understanding but missing some important details
+- 0.4-0.5 = Partial understanding, some correct elements but significant gaps
+- 0.2-0.3 = Limited understanding, few correct elements
+- 0.0-0.1 = Incorrect or no understanding shown
+
+Consider:
+- Accuracy of factual content
+- Coverage of key concepts
+- Understanding demonstrated
+- Completeness of explanation
+
+Respond with ONLY a JSON object in this format:
+{
+    "score": 0.85,
+    "feedback": "Brief explanation of the grade"
+}`;
+
+        const response = await callDeepSeekAPI([{
+            role: 'user',
+            content: gradingPrompt
+        }], 0.3, 500);
+
+        const grading = cleanJsonResponse(response);
+        
+        res.json({ 
+            success: true, 
+            score: grading.score,
+            feedback: grading.feedback 
+        });
+
+    } catch (error) {
+        console.error('Answer grading error:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Failed to grade answer' 
+        });
+    }
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({ 
         status: 'healthy', 
         timestamp: new Date().toISOString(),
-        apiKey: DEEPSEEK_API_KEY ? DEEPSEEK_API_KEY.substring(0, 10) + '...' : 'not set'
+        apiKey: DEEPSEEK_API_KEY.substring(0, 10) + '...'
     });
 });
 
-// Start server (for local development)
-if (process.env.NODE_ENV !== 'production') {
-    app.listen(PORT, () => {
-        console.log(`🎓 StudiQ running on http://localhost:${PORT}`);
-        console.log(`📚 AI-powered study assistant ready!`);
-        console.log(`🔑 Using DeepSeek API key: ${DEEPSEEK_API_KEY ? DEEPSEEK_API_KEY.substring(0, 10) + '...' : 'not set'}`);
-    });
-}
-
-// Export for Vercel
-module.exports = app; 
+app.listen(PORT, () => {
+    console.log(`🎓 StudiQ running on http://localhost:${PORT}`);
+    console.log(`📚 AI-powered study assistant ready!`);
+    console.log(`🔑 Using DeepSeek API key: ${DEEPSEEK_API_KEY.substring(0, 10)}...`);
+}); 

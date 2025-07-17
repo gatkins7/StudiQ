@@ -17,17 +17,134 @@ class StudiQApp {
             reducedMotion: false,
             largeText: false,
             autoSaveProgress: true,
-            quizTimer: false,
             showHints: true,
             dataCollection: false,
             analytics: false
         };
         this.userData = {
-            name: '',
             setupComplete: false,
             privacyAccepted: false,
-            tosAccepted: false
+            tosAccepted: false,
+            demoCompleted: false,
+            currentStreak: 0,
+            longestStreak: 0,
+            lastStudyDate: null,
+            totalStudyTime: 0,
+            studyGoal: 30, // minutes per day
+            preferences: {
+                difficulty: 'adaptive',
+                questionTypes: ['multiple-choice'],
+                enableSpacedRepetition: true
+            }
         };
+        
+        this.favorites = [];
+        this.recentActivity = [];
+        this.studyCalendar = {};
+        this.spacedRepetitionQueue = [];
+        
+        this.demoSlides = [
+            {
+                title: "Welcome to StudiQ!",
+                content: `
+                    <div class="demo-slide">
+                        <h2>🎓 Your AI Study Companion</h2>
+                        <p>StudiQ transforms the way you learn with intelligent study tools powered by AI.</p>
+                        <div class="demo-feature">
+                            <div class="demo-feature-icon">🤖</div>
+                            <h3 style="color: var(--text-primary); margin-bottom: 8px;">AI-Powered Learning</h3>
+                            <p style="margin: 0; color: var(--text-secondary);">Get personalized study materials, instant explanations, and smart recommendations.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Create Study Sets",
+                content: `
+                    <div class="demo-slide">
+                        <h2>📚 Smart Study Set Creation</h2>
+                        <p>Turn any topic into comprehensive study materials in seconds.</p>
+                        <div class="demo-feature">
+                            <div class="demo-feature-icon">⚡</div>
+                            <h3 style="color: var(--text-primary); margin-bottom: 8px;">All-in-One Generation</h3>
+                            <p style="margin: 0; color: var(--text-secondary);">Get study text, flashcards, and quizzes all generated together from your topic description.</p>
+                        </div>
+                        <div class="demo-feature">
+                            <div class="demo-feature-icon">🎯</div>
+                            <h3 style="color: var(--text-primary); margin-bottom: 8px;">Customizable Difficulty</h3>
+                            <p style="margin: 0; color: var(--text-secondary);">Choose from "Just Getting Started" to "Ready for a Challenge" to match your level.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Sequential Learning Flow",
+                content: `
+                    <div class="demo-slide">
+                        <h2>📖 Guided Study Experience</h2>
+                        <p>Follow a proven learning sequence for maximum retention.</p>
+                        <div class="demo-feature">
+                            <div class="demo-feature-icon">1️⃣</div>
+                            <h3 style="color: var(--text-primary); margin-bottom: 8px;">Read Study Text</h3>
+                            <p style="margin: 0; color: var(--text-secondary);">Start with comprehensive, easy-to-read explanations of your topic.</p>
+                        </div>
+                        <div class="demo-feature">
+                            <div class="demo-feature-icon">2️⃣</div>
+                            <h3 style="color: var(--text-primary); margin-bottom: 8px;">Practice with Flashcards</h3>
+                            <p style="margin: 0; color: var(--text-secondary);">Reinforce key concepts with interactive flashcards.</p>
+                        </div>
+                        <div class="demo-feature">
+                            <div class="demo-feature-icon">3️⃣</div>
+                            <h3 style="color: var(--text-primary); margin-bottom: 8px;">Test with Quizzes</h3>
+                            <p style="margin: 0; color: var(--text-secondary);">Validate your knowledge with comprehensive quizzes.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "AI Assistant",
+                content: `
+                    <div class="demo-slide">
+                        <h2>💬 Your Personal Study Assistant</h2>
+                        <p>Get instant help and explanations whenever you need them.</p>
+                        <div class="demo-feature">
+                            <div class="demo-feature-icon">🧠</div>
+                            <h3 style="color: var(--text-primary); margin-bottom: 8px;">Smart Conversations</h3>
+                            <p style="margin: 0; color: var(--text-secondary);">Ask questions about any subject and get detailed, helpful explanations.</p>
+                        </div>
+                        <div class="demo-feature">
+                            <div class="demo-feature-icon">📝</div>
+                            <h3 style="color: var(--text-primary); margin-bottom: 8px;">Study Tips & Strategies</h3>
+                            <p style="margin: 0; color: var(--text-secondary);">Learn effective study techniques and get personalized advice.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Your Study Library",
+                content: `
+                    <div class="demo-slide">
+                        <h2>📖 Organized Knowledge Base</h2>
+                        <p>Keep all your study materials in one beautiful, organized place.</p>
+                        <div class="demo-feature">
+                            <div class="demo-feature-icon">💾</div>
+                            <h3 style="color: var(--text-primary); margin-bottom: 8px;">Auto-Save Everything</h3>
+                            <p style="margin: 0; color: var(--text-secondary);">All study sets are automatically saved to your library after completion.</p>
+                        </div>
+                        <div class="demo-feature">
+                            <div class="demo-feature-icon">📊</div>
+                            <h3 style="color: var(--text-primary); margin-bottom: 8px;">Track Your Progress</h3>
+                            <p style="margin: 0; color: var(--text-secondary);">See your quiz scores, study streaks, and overall learning progress.</p>
+                        </div>
+                        <div style="margin-top: 32px; padding: 24px; background: rgba(34, 197, 94, 0.1); border: 2px solid rgba(34, 197, 94, 0.3); border-radius: 12px;">
+                            <h3 style="color: #22c55e; margin-bottom: 8px;">🎉 Ready to Start Learning?</h3>
+                            <p style="margin: 0; color: var(--text-primary);">You're all set! Click "Start Using StudiQ" to begin your learning journey.</p>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+        this.currentSlide = 0;
         
         this.initializeApp();
     }
@@ -37,9 +154,9 @@ class StudiQApp {
         
         // Check if first-time setup is needed
         if (!this.userData.setupComplete) {
-            this.showSetupScreen();
+            this.showWelcomeScreen();
         } else {
-            this.hideSetupScreen();
+            this.hideWelcomeScreen();
             this.updateUserDisplay();
         }
         
@@ -49,51 +166,95 @@ class StudiQApp {
         this.loadLibrary();
         this.createNotificationSystem();
         this.setupSettings();
+        this.renderStudyRecommendations();
+        this.renderRecentActivity();
     }
 
-    // First-time Setup Screen
-    showSetupScreen() {
+    // Welcome Screen
+    showWelcomeScreen() {
         const setupOverlay = document.getElementById('setup-overlay');
         setupOverlay.style.display = 'flex';
         
-        // Set up event listeners for setup form
-        setTimeout(() => {
-            const nameField = document.getElementById('user-name');
-            const privacyBox = document.getElementById('privacy-agree');
-            const tosBox = document.getElementById('tos-agree');
-            const submitButton = document.getElementById('setup-submit');
-            
-            if (nameField && privacyBox && tosBox && submitButton) {
-                // Add event listeners as backup
-                nameField.addEventListener('input', validateSetupForm);
-                nameField.addEventListener('keyup', validateSetupForm);
-                privacyBox.addEventListener('change', validateSetupForm);
-                tosBox.addEventListener('change', validateSetupForm);
-                
-                // Add click handler as backup
-                submitButton.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    completeSetupProcess();
-                });
-                
-                // Initial validation
-                validateSetupForm();
-            }
-        }, 100);
+        // Show welcome screen, hide demo initially
+        document.getElementById('welcome-screen').style.display = 'block';
+        document.getElementById('demo-overlay').style.display = 'none';
+        
+        // Validate checkboxes for continue button
+        this.setupWelcomeValidation();
     }
 
-    hideSetupScreen() {
+    hideWelcomeScreen() {
         const setupOverlay = document.getElementById('setup-overlay');
         setupOverlay.style.display = 'none';
     }
 
-
+    setupWelcomeValidation() {
+        const checkboxes = document.querySelectorAll('.agreement-checkbox');
+        const continueButton = document.getElementById('welcome-continue');
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+                continueButton.disabled = !allChecked;
+            });
+        });
+        
+        // Initially disable button
+        continueButton.disabled = true;
+    }
 
     updateUserDisplay() {
-        const displayName = this.userData.name || 'Student';
+        const displayName = 'Student';
         document.getElementById('display-user-name').textContent = displayName;
         document.getElementById('home-user-name').textContent = displayName;
-        document.getElementById('settings-name').value = displayName;
+    }
+
+    // Demo System
+    showDemo() {
+        document.getElementById('welcome-screen').style.display = 'none';
+        document.getElementById('demo-overlay').style.display = 'block';
+        
+        this.currentSlide = 0;
+        document.getElementById('demo-total').textContent = this.demoSlides.length;
+        this.renderCurrentSlide();
+    }
+
+    renderCurrentSlide() {
+        const slide = this.demoSlides[this.currentSlide];
+        document.getElementById('demo-content').innerHTML = slide.content;
+        document.getElementById('demo-current').textContent = this.currentSlide + 1;
+        
+        // Update button states
+        const prevBtn = document.getElementById('demo-prev-btn');
+        const nextBtn = document.getElementById('demo-next-btn');
+        const finishBtn = document.getElementById('demo-finish-btn');
+        
+        prevBtn.disabled = this.currentSlide === 0;
+        
+        if (this.currentSlide === this.demoSlides.length - 1) {
+            nextBtn.style.display = 'none';
+            finishBtn.style.display = 'flex';
+        } else {
+            nextBtn.style.display = 'flex';
+            finishBtn.style.display = 'none';
+        }
+    }
+
+    completeOnboarding() {
+        const privacyAccepted = document.getElementById('privacy-agree').checked;
+        const tosAccepted = document.getElementById('tos-agree').checked;
+
+        this.userData = {
+            setupComplete: true,
+            privacyAccepted: privacyAccepted,
+            tosAccepted: tosAccepted,
+            demoCompleted: true
+        };
+
+        this.saveData();
+        this.hideWelcomeScreen();
+        this.updateUserDisplay();
+        this.showNotification('Welcome to StudiQ! 🎉 Ready to start learning?', 'success');
     }
 
     // Settings Management
@@ -106,12 +267,7 @@ class StudiQApp {
             }
         });
 
-        // Update settings name field
-        document.getElementById('settings-name').addEventListener('change', (e) => {
-            this.userData.name = e.target.value;
-            this.updateUserDisplay();
-            this.saveData();
-        });
+
     }
 
     // Enhanced Navigation System
@@ -563,6 +719,8 @@ class StudiQApp {
             return;
         }
 
+        const questionHtml = this.renderQuestionByType(currentQuestion, this.currentQuizIndex);
+        
         container.innerHTML = `
             <div style="max-width: 800px; margin: 0 auto;">
                 <div style="background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(20px); border-radius: var(--border-radius); padding: 40px; box-shadow: var(--shadow-lg); border: 2px solid rgba(148, 163, 184, 0.3);">
@@ -570,14 +728,7 @@ class StudiQApp {
                         <div style="color: var(--text-secondary); font-weight: 600;">Question ${this.currentQuizIndex + 1} of ${quiz.length}</div>
                         <div style="color: var(--text-muted);">${Math.round(((this.currentQuizIndex + 1) / quiz.length) * 100)}%</div>
                     </div>
-                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 24px; line-height: 1.4;">${currentQuestion.question}</div>
-                    <div style="display: grid; gap: 16px; margin-bottom: 32px;">
-                        ${currentQuestion.options.map((option, index) => `
-                            <div class="option" onclick="app.selectQuizOption(${index})" data-option="${index}" style="background: rgba(30, 41, 59, 0.8); border: 2px solid rgba(148, 163, 184, 0.3); border-radius: var(--border-radius-sm); padding: 20px; cursor: pointer; transition: all var(--transition-medium); backdrop-filter: blur(10px);">
-                                <div style="color: var(--text-primary); font-weight: 500; font-size: 1.1rem;">${option}</div>
-                            </div>
-                        `).join('')}
-                    </div>
+                    ${questionHtml}
                     <div style="display: flex; justify-content: space-between; margin-top: 32px;">
                         <button class="btn btn-secondary" onclick="app.previousQuestion()" ${this.currentQuizIndex === 0 ? 'disabled' : ''}>
                             <i class="fas fa-arrow-left"></i>
@@ -589,6 +740,31 @@ class StudiQApp {
                         </button>
                     </div>
                 </div>
+            </div>
+        `;
+    }
+
+    renderQuestionByType(question, questionIndex) {
+        return `
+            <div style="margin-bottom: 24px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                    <span style="color: var(--accent-blue); font-size: 1rem;"><i class="fas fa-list"></i></span>
+                    <span style="color: var(--text-muted); font-size: 0.9rem;">Multiple Choice</span>
+                </div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 24px; line-height: 1.4;">${question.question}</div>
+            </div>
+            ${this.renderQuestionOptions(question, questionIndex)}
+        `;
+    }
+
+    renderQuestionOptions(question, questionIndex) {
+        return `
+            <div style="display: grid; gap: 16px; margin-bottom: 32px;">
+                ${question.options.map((option, index) => `
+                    <div class="option" onclick="app.selectQuizOption(${index})" data-option="${index}" style="background: rgba(30, 41, 59, 0.8); border: 2px solid rgba(148, 163, 184, 0.3); border-radius: var(--border-radius-sm); padding: 20px; cursor: pointer; transition: all var(--transition-medium); backdrop-filter: blur(10px);">
+                        <div style="color: var(--text-primary); font-weight: 500; font-size: 1.1rem;">${option}</div>
+                    </div>
+                `).join('')}
             </div>
         `;
     }
@@ -614,6 +790,8 @@ class StudiQApp {
         document.getElementById('next-question-btn').disabled = false;
     }
 
+
+
     nextQuestion() {
         if (this.currentQuizIndex < this.currentStudySet.quiz.length - 1) {
             this.currentQuizIndex++;
@@ -630,31 +808,121 @@ class StudiQApp {
         }
     }
 
-    finishQuiz() {
-        // Calculate score
-        const quiz = this.currentStudySet.quiz;
-        let correctAnswers = 0;
-        
-        for (let i = 0; i < quiz.length; i++) {
-            if (this.quizAnswers[i] === quiz[i].correctAnswer) {
-                correctAnswers++;
+    async finishQuiz() {
+        try {
+            // Show loading for quiz grading
+            this.showNotification('🎯 Calculating your score...', 'info');
+            
+            const quiz = this.currentStudySet.quiz;
+            let correctAnswers = 0;
+            let totalPoints = 0;
+            const questionResults = [];
+            
+            console.log('Starting quiz grading for', quiz.length, 'questions');
+            
+            // Grade each question based on type
+            for (let i = 0; i < quiz.length; i++) {
+                const question = quiz[i];
+                const userAnswer = this.quizAnswers[i];
+                const questionType = question.type || 'multiple-choice';
+                
+                console.log(`Grading question ${i + 1}:`, questionType, userAnswer);
+                
+                let isCorrect = false;
+                let points = 0;
+                let aiFeedback = null;
+                let explanation = '';
+                
+                try {
+                    // All questions are now multiple choice
+                    isCorrect = userAnswer === question.correctAnswer;
+                    points = isCorrect ? 1 : 0;
+                    
+                    // Generate explanation for multiple choice
+                    if (isCorrect) {
+                        explanation = `Correct! ${question.options[question.correctAnswer]} is the right answer.`;
+                    } else {
+                        const selectedOption = userAnswer !== undefined ? question.options[userAnswer] : 'No answer';
+                        explanation = `Incorrect. You selected "${selectedOption}" but the correct answer is "${question.options[question.correctAnswer]}".`;
+                    }
+                } catch (questionError) {
+                    console.error(`Error grading question ${i + 1}:`, questionError);
+                    // Give partial credit for errors
+                    points = 0.5;
+                    explanation = 'Error occurred during grading. Partial credit given.';
+                }
+                
+                // Store detailed result for this question
+                questionResults.push({
+                    question: question.question,
+                    questionType,
+                    userAnswer,
+                    correctAnswer: question.correctAnswer,
+                    options: question.options || null,
+                    isCorrect,
+                    points,
+                    explanation,
+                    aiFeedback
+                });
+                
+                if (isCorrect) correctAnswers++;
+                totalPoints += points;
             }
+            
+            console.log('Quiz grading complete. Total points:', totalPoints);
+            
+            // Calculate final score
+            const score = Math.round((totalPoints / quiz.length) * 100);
+            
+            // Save score and detailed results
+            this.currentStudySet.quizScore = score;
+            this.currentStudySet.completed = true;
+            this.currentStudySet.detailedResults = {
+                correctAnswers,
+                totalQuestions: quiz.length,
+                totalPoints,
+                questionResults,
+                gradedAt: new Date().toISOString()
+            };
+            
+            this.saveData();
+            
+            console.log('Showing quiz results...');
+            // Show results
+            this.showQuizResults(document.getElementById('content-area'));
+            
+        } catch (error) {
+            console.error('Quiz grading failed:', error);
+            this.showNotification('❌ Error grading quiz. Please try again.', 'error');
+            
+            // Show basic results without detailed grading
+            const basicScore = Math.round((this.quizAnswers.filter((answer, i) => 
+                answer === this.currentStudySet.quiz[i].correctAnswer
+            ).length / this.currentStudySet.quiz.length) * 100);
+            
+            this.currentStudySet.quizScore = basicScore;
+            this.currentStudySet.completed = true;
+            this.saveData();
+            this.showQuizResults(document.getElementById('content-area'));
         }
-        
-        const score = Math.round((correctAnswers / quiz.length) * 100);
-        
-        // Save score
-        this.currentStudySet.quizScore = score;
-        this.currentStudySet.completed = true;
-        this.saveData();
-        
-        // Show results
-        this.showQuizResults(document.getElementById('content-area'));
     }
+
+
 
     showQuizResults(container) {
         const score = this.currentStudySet.quizScore || 0;
         const quiz = this.currentStudySet.quiz;
+        const detailedResults = this.currentStudySet.detailedResults;
+        
+        // Update streak and activity tracking
+        this.updateStreak();
+        this.addToRecentActivity('completed_quiz', this.currentStudySet, { score });
+        this.addToStudyCalendar(this.currentStudySet.id, 10); // Assume 10 minutes for quiz
+        
+        // Add to spaced repetition if enabled
+        if (this.userData.preferences.enableSpacedRepetition && score < 80) {
+            this.addToSpacedRepetition(this.currentStudySet.id, score);
+        }
         
         // Update library since quiz is complete
         this.loadLibrary();
@@ -666,28 +934,191 @@ class StudiQApp {
         container.innerHTML = `
             <div style="text-align: center; padding: 48px;">
                 <div style="font-size: 4rem; margin-bottom: 24px;">${score >= 80 ? '🎉' : score >= 60 ? '👍' : '📚'}</div>
-                <h2 style="color: var(--text-primary); font-size: 2.5rem; margin-bottom: 16px;">Study Set Complete!</h2>
+                <h2 style="color: var(--text-primary); font-size: 2.5rem; margin-bottom: 16px;">Quiz Complete!</h2>
                 <div style="font-size: 3rem; font-weight: 900; color: var(--accent-blue); margin-bottom: 24px;">
                     ${score}%
                 </div>
-                <p style="color: var(--text-secondary); font-size: 1.2rem; margin-bottom: 16px;">
-                    You got ${quiz.filter((q, i) => this.quizAnswers[i] === q.correctAnswer).length} out of ${quiz.length} questions correct
-                </p>
+                <div style="display: flex; justify-content: center; gap: 32px; margin-bottom: 24px;">
+                    <div style="text-align: center;">
+                        <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 4px;">Correct</div>
+                        <div style="color: #10b981; font-size: 1.5rem; font-weight: 700;">${detailedResults ? detailedResults.correctAnswers : 0}</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 4px;">Total</div>
+                        <div style="color: var(--text-primary); font-size: 1.5rem; font-weight: 700;">${quiz.length}</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 4px;">Accuracy</div>
+                        <div style="color: var(--accent-blue); font-size: 1.5rem; font-weight: 700;">${Math.round((detailedResults ? detailedResults.correctAnswers : 0) / quiz.length * 100)}%</div>
+                    </div>
+                </div>
                 <div style="background: rgba(34, 197, 94, 0.1); border: 2px solid rgba(34, 197, 94, 0.3); border-radius: var(--border-radius); padding: 20px; margin: 24px 0; display: flex; align-items: center; justify-content: center; gap: 12px;">
                     <i class="fas fa-check-circle" style="color: #22c55e; font-size: 1.5rem;"></i>
                     <span style="color: var(--text-primary); font-weight: 600;">
-                        "${this.currentStudySet.title}" has been saved to your library!
+                        "${this.currentStudySet.title}" saved to your library!
                     </span>
                 </div>
-                <div style="display: flex; justify-content: center; gap: 16px; margin-top: 32px;">
+                <div style="display: flex; justify-content: center; gap: 16px; margin-top: 32px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="app.showDetailedReview()" style="padding: 16px 24px; font-size: 1.1rem; font-weight: 600;">
+                        <i class="fas fa-clipboard-list" style="margin-right: 8px;"></i>
+                        See Review
+                    </button>
                     <button class="btn btn-secondary" onclick="app.retakeQuiz()">
                         <i class="fas fa-redo"></i>
                         Retake Quiz
                     </button>
-                    <button class="btn btn-primary" onclick="app.switchSection('library')">
+                    <button class="btn btn-outline" onclick="app.switchSection('library')">
                         <i class="fas fa-book"></i>
                         View Library
                     </button>
+                </div>
+                <div style="margin-top: 24px;">
+                    <p style="color: var(--text-secondary); margin-bottom: 16px;">
+                        Want to study more? Review the materials below:
+                    </p>
+                    <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+                        <button class="btn btn-outline" onclick="app.switchContent('text')">
+                            <i class="fas fa-book-open"></i>
+                            Review Text
+                        </button>
+                        <button class="btn btn-outline" onclick="app.switchContent('flashcards')">
+                            <i class="fas fa-clone"></i>
+                            Study Cards
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    showDetailedReview() {
+        const container = document.getElementById('content-area');
+        const score = this.currentStudySet.quizScore || 0;
+        const quiz = this.currentStudySet.quiz;
+        const detailedResults = this.currentStudySet.detailedResults;
+        
+        // Generate detailed question breakdown
+        const questionBreakdown = detailedResults && detailedResults.questionResults ? 
+            detailedResults.questionResults.map((result, index) => {
+                const isCorrect = result.isCorrect;
+                const iconColor = isCorrect ? '#10b981' : '#ef4444';
+                const icon = isCorrect ? 'fas fa-check-circle' : 'fas fa-times-circle';
+                const bgColor = isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+                const borderColor = isCorrect ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)';
+                
+                // Format user answer display for multiple choice
+                let userAnswerDisplay = '';
+                let correctAnswerDisplay = '';
+                
+                if (result.userAnswer !== undefined && result.options) {
+                    userAnswerDisplay = result.options[result.userAnswer] || 'No answer';
+                } else {
+                    userAnswerDisplay = 'No answer';
+                }
+                
+                if (result.options) {
+                    correctAnswerDisplay = result.options[result.correctAnswer];
+                }
+                
+                const pointsDisplay = result.points === 1 ? '100%' : '0%';
+                
+                return `
+                    <div style="background: ${bgColor}; border: 2px solid ${borderColor}; border-radius: var(--border-radius); padding: 24px; margin: 16px 0;">
+                        <div style="display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px;">
+                            <div style="display: flex; align-items: center; gap: 8px; min-width: 120px;">
+                                <i class="${icon}" style="color: ${iconColor}; font-size: 1.2rem;"></i>
+                                <span style="color: var(--text-primary); font-weight: 600;">Question ${index + 1}</span>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="color: var(--text-primary); font-weight: 500; margin-bottom: 12px; line-height: 1.4;">
+                                    ${result.question}
+                                </div>
+                                <div style="display: grid; gap: 8px;">
+                                    <div style="display: flex; gap: 16px;">
+                                        <span style="color: var(--text-secondary); font-weight: 500; min-width: 100px;">Your Answer:</span>
+                                        <span style="color: var(--text-primary);">${userAnswerDisplay}</span>
+                                    </div>
+                                    <div style="display: flex; gap: 16px;">
+                                        <span style="color: var(--text-secondary); font-weight: 500; min-width: 100px;">Correct:</span>
+                                        <span style="color: var(--text-primary);">${correctAnswerDisplay}</span>
+                                    </div>
+                                    <div style="display: flex; gap: 16px;">
+                                        <span style="color: var(--text-secondary); font-weight: 500; min-width: 100px;">Points:</span>
+                                        <span style="color: var(--text-primary); font-weight: 600;">${pointsDisplay}</span>
+                                    </div>
+                                </div>
+                                ${result.explanation ? `
+                                    <div style="margin-top: 12px; padding: 12px; background: rgba(30, 41, 59, 0.4); border-radius: 6px;">
+                                        <div style="color: var(--text-secondary); font-size: 0.9rem; font-weight: 500; margin-bottom: 4px;">Explanation:</div>
+                                        <div style="color: var(--text-primary); line-height: 1.4;">${result.explanation}</div>
+                                    </div>
+                                ` : ''}
+                                ${result.aiFeedback ? `
+                                    <div style="margin-top: 12px; padding: 12px; background: rgba(96, 165, 250, 0.1); border: 1px solid rgba(96, 165, 250, 0.3); border-radius: 6px;">
+                                        <div style="color: var(--accent-blue); font-size: 0.9rem; font-weight: 500; margin-bottom: 4px;">
+                                            <i class="fas fa-robot" style="margin-right: 6px;"></i>AI Feedback:
+                                        </div>
+                                        <div style="color: var(--text-primary); line-height: 1.4;">${result.aiFeedback}</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('') : '';
+        
+        container.innerHTML = `
+            <div style="max-width: 1000px; margin: 0 auto; padding: 24px;">
+                <!-- Header with Back Button -->
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 32px;">
+                    <button class="btn btn-outline" onclick="app.showQuizResults(document.getElementById('content-area'))" style="padding: 12px 16px;">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Results
+                    </button>
+                    <div style="flex: 1;">
+                        <h2 style="color: var(--text-primary); font-size: 1.8rem; margin: 0;">
+                            <i class="fas fa-clipboard-list" style="margin-right: 8px; color: var(--accent-blue);"></i>
+                            Detailed Quiz Review
+                        </h2>
+                        <p style="color: var(--text-secondary); margin: 4px 0 0 0;">Final Score: <strong style="color: var(--accent-blue);">${score}%</strong></p>
+                    </div>
+                </div>
+                
+                <!-- Question by Question Review -->
+                ${questionBreakdown ? `
+                    <div style="margin-bottom: 32px;">
+                        ${questionBreakdown}
+                    </div>
+                ` : `
+                    <div style="text-align: center; padding: 48px; color: var(--text-secondary);">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 16px;"></i>
+                        <p>No detailed results available for this quiz.</p>
+                    </div>
+                `}
+                
+                <!-- Actions -->
+                <div style="text-align: center; padding: 24px; background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(20px); border-radius: var(--border-radius); box-shadow: var(--shadow-lg); border: 2px solid rgba(148, 163, 184, 0.3);">
+                    <p style="color: var(--text-secondary); margin-bottom: 16px;">
+                        Want to improve your score? You can retake the quiz or review the materials.
+                    </p>
+                    <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="app.retakeQuiz()">
+                            <i class="fas fa-redo"></i>
+                            Retake Quiz
+                        </button>
+                        <button class="btn btn-outline" onclick="app.switchContent('text')">
+                            <i class="fas fa-book-open"></i>
+                            Review Text
+                        </button>
+                        <button class="btn btn-outline" onclick="app.switchContent('flashcards')">
+                            <i class="fas fa-clone"></i>
+                            Study Cards
+                        </button>
+                        <button class="btn btn-secondary" onclick="app.switchSection('library')">
+                            <i class="fas fa-book"></i>
+                            Library
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
@@ -804,10 +1235,18 @@ class StudiQApp {
         }
 
         libraryGrid.innerHTML = this.studySets.map(studySet => `
-            <div style="background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(20px); border-radius: var(--border-radius); padding: 24px; border: 2px solid rgba(148, 163, 184, 0.3); cursor: pointer; transition: all var(--transition-medium); position: relative; overflow: hidden;" onclick="app.openStudySet(${JSON.stringify(studySet).replace(/"/g, '&quot;')})" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='var(--shadow-lg)'; this.style.borderColor='var(--accent-blue)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='rgba(148, 163, 184, 0.3)';">
-                <h3 style="color: var(--text-primary); font-size: 1.3rem; font-weight: 700; margin-bottom: 12px;">${studySet.title}</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 0.95rem;">${studySet.description}</p>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(148, 163, 184, 0.3);">
+            <div style="background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(20px); border-radius: var(--border-radius); padding: 24px; border: 2px solid rgba(148, 163, 184, 0.3); cursor: pointer; transition: all var(--transition-medium); position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='var(--shadow-lg)'; this.style.borderColor='var(--accent-blue)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='rgba(148, 163, 184, 0.3)';">
+                
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                    <h3 style="color: var(--text-primary); font-size: 1.3rem; font-weight: 700; margin: 0; flex: 1;" onclick="app.openStudySet(${JSON.stringify(studySet).replace(/"/g, '&quot;')})">${studySet.title}</h3>
+                    <button style="background: none; border: none; color: ${this.isFavorite(studySet.id) ? '#fbbf24' : 'var(--text-muted)'}; font-size: 1.2rem; cursor: pointer; padding: 4px; margin-left: 8px;" onclick="event.stopPropagation(); app.toggleFavorite(${studySet.id})" title="${this.isFavorite(studySet.id) ? 'Remove from favorites' : 'Add to favorites'}">
+                        <i class="fas fa-star"></i>
+                    </button>
+                </div>
+                
+                <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 0.95rem;" onclick="app.openStudySet(${JSON.stringify(studySet).replace(/"/g, '&quot;')})">${studySet.description}</p>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(148, 163, 184, 0.3);" onclick="app.openStudySet(${JSON.stringify(studySet).replace(/"/g, '&quot;')})">
                     <div style="color: var(--text-muted); font-size: 0.85rem;">
                         Created ${new Date(studySet.createdAt).toLocaleDateString()}
                     </div>
@@ -817,8 +1256,9 @@ class StudiQApp {
                         <div style="padding: 4px 8px; background: var(--accent-blue); color: white; border-radius: 4px; font-size: 0.75rem; font-weight: 500;">Cards</div>
                     </div>
                 </div>
+                
                 ${studySet.completed ? `
-                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 12px; color: #10b981;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 12px; color: #10b981;" onclick="app.openStudySet(${JSON.stringify(studySet).replace(/"/g, '&quot;')})">
                         <i class="fas fa-check-circle"></i>
                         <span style="font-size: 0.9rem;">Completed (${studySet.quizScore}%)</span>
                     </div>
@@ -827,25 +1267,32 @@ class StudiQApp {
         `).join('');
     }
 
-    // Profile Statistics
+    // Enhanced Profile Statistics
     updateProfileStats() {
         const totalStudySets = this.studySets.length;
         const completedSets = this.studySets.filter(set => set.completed);
         const averageScore = completedSets.length > 0 
             ? Math.round(completedSets.reduce((sum, set) => sum + set.quizScore, 0) / completedSets.length)
             : 0;
-        
-        // Calculate study streak (simplified)
-        const today = new Date();
-        const daysSinceLastStudy = this.studySets.length > 0 
-            ? Math.floor((today - new Date(this.studySets[this.studySets.length - 1].lastAccessed)) / (1000 * 60 * 60 * 24))
-            : 0;
-        const studyStreak = daysSinceLastStudy <= 1 ? this.studySets.length : 0;
 
-        // Update UI
+        // Update UI with enhanced stats
         document.getElementById('total-study-sets').textContent = totalStudySets;
         document.getElementById('total-quiz-score').textContent = `${averageScore}%`;
-        document.getElementById('study-streak').textContent = studyStreak;
+        document.getElementById('study-streak').textContent = this.userData.currentStreak;
+        
+        // Update additional stats if elements exist
+        const longestStreakEl = document.getElementById('longest-streak');
+        if (longestStreakEl) longestStreakEl.textContent = this.userData.longestStreak;
+        
+        const totalTimeEl = document.getElementById('total-study-time');
+        if (totalTimeEl) {
+            const hours = Math.floor(this.userData.totalStudyTime / 60);
+            const minutes = this.userData.totalStudyTime % 60;
+            totalTimeEl.textContent = `${hours}h ${minutes}m`;
+        }
+        
+        const favoritesCountEl = document.getElementById('favorites-count');
+        if (favoritesCountEl) favoritesCountEl.textContent = this.favorites.length;
     }
 
     // Chat System
@@ -973,13 +1420,17 @@ class StudiQApp {
         }
     }
 
-    // Data Persistence
+    // Enhanced Data Persistence
     saveData() {
         const data = {
             studySets: this.studySets,
             chatConversation: this.chatConversation,
             settings: this.settings,
-            userData: this.userData
+            userData: this.userData,
+            favorites: this.favorites,
+            recentActivity: this.recentActivity,
+            studyCalendar: this.studyCalendar,
+            spacedRepetitionQueue: this.spacedRepetitionQueue
         };
         localStorage.setItem('studiq_data', JSON.stringify(data));
     }
@@ -992,11 +1443,312 @@ class StudiQApp {
             this.chatConversation = parsedData.chatConversation || [];
             this.settings = { ...this.settings, ...parsedData.settings };
             this.userData = { ...this.userData, ...parsedData.userData };
-            console.log('Data loaded:', { userData: this.userData });
-        } else {
-            console.log('No existing data found');
+            this.favorites = parsedData.favorites || [];
+            this.recentActivity = parsedData.recentActivity || [];
+            this.studyCalendar = parsedData.studyCalendar || {};
+            this.spacedRepetitionQueue = parsedData.spacedRepetitionQueue || [];
         }
     }
+
+    // Streak System
+    updateStreak() {
+        const today = new Date().toDateString();
+        const lastStudy = this.userData.lastStudyDate;
+        
+        if (!lastStudy) {
+            // First time studying
+            this.userData.currentStreak = 1;
+            this.userData.lastStudyDate = today;
+        } else if (lastStudy === today) {
+            // Already studied today, no change
+            return;
+        } else {
+            const lastDate = new Date(lastStudy);
+            const todayDate = new Date(today);
+            const diffTime = todayDate - lastDate;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 1) {
+                // Consecutive day
+                this.userData.currentStreak++;
+            } else {
+                // Streak broken
+                this.userData.currentStreak = 1;
+            }
+            this.userData.lastStudyDate = today;
+        }
+        
+        // Update longest streak
+        if (this.userData.currentStreak > this.userData.longestStreak) {
+            this.userData.longestStreak = this.userData.currentStreak;
+        }
+        
+        this.saveData();
+    }
+
+    // Favorites System
+    addToFavorites(studySetId) {
+        if (!this.favorites.includes(studySetId)) {
+            this.favorites.push(studySetId);
+            this.saveData();
+            this.showNotification('Added to favorites! ⭐', 'success');
+        }
+    }
+
+    removeFromFavorites(studySetId) {
+        this.favorites = this.favorites.filter(id => id !== studySetId);
+        this.saveData();
+        this.showNotification('Removed from favorites', 'info');
+    }
+
+    isFavorite(studySetId) {
+        return this.favorites.includes(studySetId);
+    }
+
+    toggleFavorite(studySetId) {
+        if (this.isFavorite(studySetId)) {
+            this.removeFromFavorites(studySetId);
+        } else {
+            this.addToFavorites(studySetId);
+        }
+        this.loadLibrary(); // Refresh library to update star
+    }
+
+    // Recent Activity Tracking
+    addToRecentActivity(action, studySet, details = {}) {
+        const activity = {
+            id: Date.now(),
+            action,
+            studySetId: studySet.id,
+            studySetTitle: studySet.title,
+            timestamp: new Date().toISOString(),
+            details
+        };
+        
+        this.recentActivity.unshift(activity);
+        
+        // Keep only last 50 activities
+        if (this.recentActivity.length > 50) {
+            this.recentActivity = this.recentActivity.slice(0, 50);
+        }
+        
+        this.saveData();
+    }
+
+    // Study Calendar
+    addToStudyCalendar(studySetId, duration = 0) {
+        const today = new Date().toDateString();
+        
+        if (!this.studyCalendar[today]) {
+            this.studyCalendar[today] = {
+                studySets: [],
+                totalTime: 0,
+                completed: false
+            };
+        }
+        
+        if (!this.studyCalendar[today].studySets.includes(studySetId)) {
+            this.studyCalendar[today].studySets.push(studySetId);
+        }
+        
+        this.studyCalendar[today].totalTime += duration;
+        this.userData.totalStudyTime += duration;
+        
+        // Check if daily goal met
+        if (this.studyCalendar[today].totalTime >= this.userData.studyGoal) {
+            this.studyCalendar[today].completed = true;
+            if (this.studyCalendar[today].totalTime === this.userData.studyGoal) {
+                this.showNotification('🎉 Daily study goal achieved!', 'success');
+            }
+        }
+        
+        this.saveData();
+    }
+
+    // Spaced Repetition System
+    addToSpacedRepetition(studySetId, score) {
+        const existingIndex = this.spacedRepetitionQueue.findIndex(item => item.studySetId === studySetId);
+        
+        // Calculate next review date based on score
+        const now = new Date();
+        let nextReviewDays;
+        
+        if (score >= 70) nextReviewDays = 3;
+        else if (score >= 50) nextReviewDays = 1;
+        else nextReviewDays = 0.5; // 12 hours
+        
+        const nextReview = new Date(now.getTime() + (nextReviewDays * 24 * 60 * 60 * 1000));
+        
+        const reviewItem = {
+            studySetId,
+            nextReview: nextReview.toISOString(),
+            difficulty: score < 50 ? 'hard' : score < 70 ? 'medium' : 'easy',
+            reviewCount: 1
+        };
+        
+        if (existingIndex >= 0) {
+            this.spacedRepetitionQueue[existingIndex] = {
+                ...this.spacedRepetitionQueue[existingIndex],
+                ...reviewItem,
+                reviewCount: this.spacedRepetitionQueue[existingIndex].reviewCount + 1
+            };
+        } else {
+            this.spacedRepetitionQueue.push(reviewItem);
+        }
+        
+        this.saveData();
+    }
+
+    getStudyRecommendations() {
+        const recommendations = [];
+        
+        // Spaced repetition recommendations
+        const now = new Date();
+        const dueReviews = this.spacedRepetitionQueue.filter(item => 
+            new Date(item.nextReview) <= now
+        ).slice(0, 3);
+        
+        dueReviews.forEach(item => {
+            const studySet = this.studySets.find(set => set.id === item.studySetId);
+            if (studySet) {
+                recommendations.push({
+                    type: 'review',
+                    studySet,
+                    reason: `Due for spaced repetition review (${item.difficulty} difficulty)`,
+                    priority: item.difficulty === 'hard' ? 3 : item.difficulty === 'medium' ? 2 : 1
+                });
+            }
+        });
+        
+        // Low performance recommendations
+        const lowScoreSets = this.studySets
+            .filter(set => set.quizScore && set.quizScore < 70)
+            .sort((a, b) => a.quizScore - b.quizScore)
+            .slice(0, 2);
+            
+        lowScoreSets.forEach(studySet => {
+            recommendations.push({
+                type: 'improve',
+                studySet,
+                reason: `Low quiz score (${studySet.quizScore}%) - practice recommended`,
+                priority: 2
+            });
+        });
+        
+        // Recent incomplete sets
+        const recentIncomplete = this.studySets
+            .filter(set => !set.completed)
+            .sort((a, b) => new Date(b.lastAccessed) - new Date(a.lastAccessed))
+            .slice(0, 2);
+            
+        recentIncomplete.forEach(studySet => {
+            recommendations.push({
+                type: 'continue',
+                studySet,
+                reason: 'Continue your study session',
+                priority: 1
+            });
+        });
+        
+        return recommendations.sort((a, b) => b.priority - a.priority);
+    }
+
+    // UI Rendering Methods
+    renderStudyRecommendations() {
+        const container = document.getElementById('study-recommendations');
+        if (!container) return;
+        
+        const recommendations = this.getStudyRecommendations();
+        
+        if (recommendations.length === 0) {
+            container.innerHTML = '';
+            return;
+        }
+        
+        container.innerHTML = `
+            <div style="margin-bottom: 24px;">
+                <h3 style="color: var(--text-primary); font-size: 1.5rem; font-weight: 700; margin-bottom: 8px;">
+                    <i class="fas fa-lightbulb" style="margin-right: 8px; color: var(--accent-blue);"></i>
+                    Study Recommendations
+                </h3>
+                <p style="color: var(--text-secondary); font-size: 0.95rem;">AI-powered suggestions to maximize your learning</p>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+                ${recommendations.slice(0, 3).map(rec => `
+                    <div style="background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(20px); border-radius: var(--border-radius); padding: 20px; border: 2px solid rgba(148, 163, 184, 0.3); cursor: pointer; transition: all var(--transition-medium);" onclick="app.openStudySet(app.studySets.find(s => s.id === ${rec.studySet.id}))" onmouseover="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--accent-blue)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(148, 163, 184, 0.3)';">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                            <div style="width: 32px; height: 32px; background: ${rec.type === 'review' ? '#f59e0b' : rec.type === 'improve' ? '#ef4444' : '#10b981'}; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-${rec.type === 'review' ? 'clock' : rec.type === 'improve' ? 'chart-line' : 'play'}" style="color: white; font-size: 0.9rem;"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <h4 style="color: var(--text-primary); font-size: 1.1rem; font-weight: 600; margin: 0;">${rec.studySet.title}</h4>
+                            </div>
+                        </div>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">${rec.reason}</p>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    renderRecentActivity() {
+        const container = document.getElementById('recent-activity');
+        if (!container) return;
+        
+        if (this.recentActivity.length === 0) {
+            container.innerHTML = '';
+            return;
+        }
+        
+        container.innerHTML = `
+            <div style="margin-bottom: 24px;">
+                <h3 style="color: var(--text-primary); font-size: 1.5rem; font-weight: 700; margin-bottom: 8px;">
+                    <i class="fas fa-history" style="margin-right: 8px; color: var(--accent-blue);"></i>
+                    Recent Activity
+                </h3>
+                <p style="color: var(--text-secondary); font-size: 0.95rem;">Your latest study sessions</p>
+            </div>
+            <div style="background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(20px); border-radius: var(--border-radius); padding: 24px; border: 2px solid rgba(148, 163, 184, 0.3);">
+                ${this.recentActivity.slice(0, 5).map(activity => {
+                    const timeAgo = this.getTimeAgo(activity.timestamp);
+                    const actionText = activity.action === 'completed_quiz' ? `Completed quiz (${activity.details.score}%)` :
+                                     activity.action === 'started_study' ? 'Started studying' :
+                                     activity.action === 'completed_flashcards' ? 'Reviewed flashcards' :
+                                     'Studied';
+                    
+                    return `
+                        <div style="display: flex; align-items: center; gap: 16px; padding: 12px 0; border-bottom: 1px solid rgba(148, 163, 184, 0.2);">
+                            <div style="width: 24px; height: 24px; background: var(--accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-${activity.action === 'completed_quiz' ? 'check' : 'book'}" style="color: white; font-size: 0.8rem;"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="color: var(--text-primary); font-weight: 500;">${actionText}</div>
+                                <div style="color: var(--text-secondary); font-size: 0.9rem;">${activity.studySetTitle}</div>
+                            </div>
+                            <div style="color: var(--text-muted); font-size: 0.85rem;">${timeAgo}</div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+    }
+
+    getTimeAgo(timestamp) {
+        const now = new Date();
+        const time = new Date(timestamp);
+        const diffMs = now - time;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMins / 60);
+        const diffDays = Math.floor(diffHours / 24);
+        
+        if (diffMins < 1) return 'Just now';
+        if (diffMins < 60) return `${diffMins}m ago`;
+        if (diffHours < 24) return `${diffHours}h ago`;
+        if (diffDays < 7) return `${diffDays}d ago`;
+        return time.toLocaleDateString();
+    }
+
+
 }
 
 // Global App Instance
@@ -1109,91 +1861,45 @@ function resetAllData() {
     }
 }
 
-// Global setup form functions
-function validateSetupForm() {
-    const nameField = document.getElementById('user-name');
-    const privacyBox = document.getElementById('privacy-agree');
-    const tosBox = document.getElementById('tos-agree');
-    const submitButton = document.getElementById('setup-submit');
-    
-    if (!nameField || !privacyBox || !tosBox || !submitButton) {
-        console.error('Setup form elements not found');
-        return;
+// Global functions for welcome screen and demo
+function openDocument(type) {
+    if (type === 'privacy') {
+        showPrivacyPolicy();
+    } else if (type === 'terms') {
+        showTermsOfService();
     }
-    
-    const nameValid = nameField.value.trim().length > 0;
-    const privacyValid = privacyBox.checked;
-    const tosValid = tosBox.checked;
-    
-    const allValid = nameValid && privacyValid && tosValid;
-    
-    // Enable/disable button and update styling
-    submitButton.disabled = !allValid;
-    
-    if (allValid) {
-        submitButton.style.opacity = '1';
-        submitButton.style.cursor = 'pointer';
-        submitButton.style.background = 'linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%)';
-        submitButton.style.pointerEvents = 'auto';
-    } else {
-        submitButton.style.opacity = '0.6';
-        submitButton.style.cursor = 'not-allowed';
-        submitButton.style.background = '#666';
-        submitButton.style.pointerEvents = 'none';
-    }
-    
-    console.log('Form validation:', { nameValid, privacyValid, tosValid, allValid });
 }
 
-function completeSetupProcess() {
-    const nameField = document.getElementById('user-name');
-    const privacyBox = document.getElementById('privacy-agree');
-    const tosBox = document.getElementById('tos-agree');
-    const submitButton = document.getElementById('setup-submit');
+function startDemo() {
+    const privacyAccepted = document.getElementById('privacy-agree').checked;
+    const tosAccepted = document.getElementById('tos-agree').checked;
     
-    if (!nameField || !privacyBox || !tosBox) {
-        console.error('Setup form elements not found');
+    if (!privacyAccepted || !tosAccepted) {
+        app.showNotification('Please agree to both documents to continue', 'error');
         return;
     }
     
-    // Check if button is disabled
-    if (submitButton.disabled) {
-        console.log('Button is disabled, cannot proceed');
-        return;
-    }
-    
-    const userName = nameField.value.trim();
-    const privacyAccepted = privacyBox.checked;
-    const tosAccepted = tosBox.checked;
-    
-    console.log('Setup completion:', { userName, privacyAccepted, tosAccepted });
-    
-    if (!userName || !privacyAccepted || !tosAccepted) {
-        app.showNotification('Please complete all required fields', 'error');
-        return;
-    }
-    
-    // Update user data
-    app.userData = {
-        name: userName,
-        setupComplete: true,
-        privacyAccepted: privacyAccepted,
-        tosAccepted: tosAccepted
-    };
-    
-    // Save data
-    app.saveData();
-    
-    // Hide setup screen
-    app.hideSetupScreen();
-    
-    // Update display
-    app.updateUserDisplay();
-    
-    // Show success message
-    app.showNotification(`Welcome to StudiQ, ${userName}! 🎉`, 'success');
-    
-    console.log('Setup completed successfully');
+    app.showDemo();
 }
 
- 
+function nextSlide() {
+    if (app.currentSlide < app.demoSlides.length - 1) {
+        app.currentSlide++;
+        app.renderCurrentSlide();
+    }
+}
+
+function prevSlide() {
+    if (app.currentSlide > 0) {
+        app.currentSlide--;
+        app.renderCurrentSlide();
+    }
+}
+
+function skipDemo() {
+    app.completeOnboarding();
+}
+
+function finishDemo() {
+    app.completeOnboarding();
+} 
