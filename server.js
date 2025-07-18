@@ -2,13 +2,19 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
+const fetch = require('node-fetch');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
 
 // DeepSeek API configuration
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || 'sk-7b760952b5ad437f8d5da7ddcf16853a';
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+
+if (!DEEPSEEK_API_KEY) {
+    console.error('❌ DEEPSEEK_API_KEY environment variable is required');
+    process.exit(1);
+}
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions';
 
 // Middleware
@@ -655,12 +661,12 @@ app.get('/api/health', (req, res) => {
     res.json({ 
         status: 'healthy', 
         timestamp: new Date().toISOString(),
-        apiKey: DEEPSEEK_API_KEY.substring(0, 10) + '...'
+        apiKey: DEEPSEEK_API_KEY ? DEEPSEEK_API_KEY.substring(0, 10) + '...' : 'Not configured'
     });
 });
 
 app.listen(PORT, () => {
     console.log(`🎓 StudiQ running on http://localhost:${PORT}`);
     console.log(`📚 AI-powered study assistant ready!`);
-    console.log(`🔑 Using DeepSeek API key: ${DEEPSEEK_API_KEY.substring(0, 10)}...`);
+    console.log(`🔑 Using DeepSeek API key: ${DEEPSEEK_API_KEY ? DEEPSEEK_API_KEY.substring(0, 10) + '...' : 'Not configured'}`);
 }); 
