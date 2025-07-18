@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 # 🎓 StudiQ - AI-Powered Study Assistant
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/gatkins7/StudiQ)
 
 > **A comprehensive web application that transforms learning with AI-generated study materials and intelligent progress tracking.**
 
@@ -31,42 +28,7 @@
 - **Responsive Layout** - Perfect experience on desktop, tablet, and mobile
 - **Intuitive Navigation** - Clean interface with easy-to-use controls
 - **Real-time Feedback** - Instant notifications and progress updates
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 16+ 
-- npm or yarn
-- DeepSeek API key
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/gatkins7/StudiQ.git
-   cd StudiQ
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   # Add your DeepSeek API key to .env
-   DEEPSEEK_API_KEY=your_api_key_here
-   ```
-
-4. **Start the development server**
-   ```bash
-   npm start
-   ```
-
-5. **Open your browser**
-   Navigate to `http://localhost:8000`
-
+- 
 ## 🛠️ Tech Stack
 
 ### **Frontend**
@@ -90,19 +52,6 @@
 - **Vercel** - Serverless deployment platform
 - **Git** - Version control and continuous deployment
 
-## 📁 Project Structure
-
-```
-StudiQ/
-├── public/
-│   ├── index.html          # Main application UI
-│   └── app.js             # Frontend JavaScript logic
-├── server.js              # Express.js backend server
-├── package.json           # Dependencies and scripts
-├── vercel.json           # Deployment configuration
-├── .env.example          # Environment variables template
-└── README.md             # Project documentation
-```
 
 ## 🌟 Key Highlights
 
@@ -124,45 +73,6 @@ StudiQ/
 - **Responsive Design** - Works perfectly on all devices
 - **Smooth Animations** - Polished interactions throughout
 
-## 🚀 Deployment
-
-### **Deploy to Vercel (Recommended)**
-
-1. **One-click deploy**
-   [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/gatkins7/StudiQ)
-
-2. **Manual deployment**
-   ```bash
-   # Install Vercel CLI
-   npm i -g vercel
-   
-   # Deploy to Vercel
-   vercel
-   
-   # Follow the prompts to configure your deployment
-   ```
-
-3. **Environment Variables**
-   Add your `DEEPSEEK_API_KEY` in the Vercel dashboard under Settings → Environment Variables
-
-### **Other Platforms**
-- **Netlify** - Works with minor configuration
-- **Railway** - Direct deployment support
-- **Heroku** - Add Procfile for deployment
-
-## 🔧 Configuration
-
-### **Environment Variables**
-```bash
-DEEPSEEK_API_KEY=your_deepseek_api_key    # Required for AI features
-PORT=8000                                 # Server port (optional)
-```
-
-### **API Rate Limits**
-- DeepSeek API has generous rate limits for personal use
-- Consider upgrading for production applications
-- Implement caching for frequently accessed content
-
 ## 🤝 Contributing
 
 We welcome contributions! Here's how to get started:
@@ -182,22 +92,6 @@ We welcome contributions! Here's how to get started:
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🔗 Links
-
-- **Live Demo**: [StudiQ on Vercel](https://studiq.vercel.app) _(Coming Soon)_
-- **Repository**: [GitHub](https://github.com/gatkins7/StudiQ)
-- **Issues**: [Bug Reports & Feature Requests](https://github.com/gatkins7/StudiQ/issues)
-
-## 🌟 Roadmap
-
-### **Upcoming Features**
-- [ ] User authentication and profiles
-- [ ] Study group collaboration
-- [ ] Advanced analytics dashboard
-- [ ] Mobile app development
-- [ ] Offline study mode
-- [ ] Custom AI model training
 
 ---
 
