@@ -1,36 +1,28 @@
-<<<<<<< HEAD
-# 🎓 StudiQ - AI-Powered Study Assistant
+# StudiQ - AI-Powered Study Assistant
 
 > **A comprehensive web application that transforms learning with AI-generated study materials and intelligent progress tracking.**
 
-## ✨ Features
+##  Features
 
-### 🤖 **AI-Powered Content Generation**
+###  **AI-Powered Content Generation**
 - **Smart Study Sets** - Generate complete study materials from any topic
 - **Comprehensive Materials** - Text summaries, flashcards, and quizzes all in one
 - **AI Chat Assistant** - Get instant help and explanations for study questions
 - **Adaptive Difficulty** - Content tailored to your skill level
 
-### 📚 **Interactive Learning Tools**
+### **Interactive Learning Tools**
 - **Multiple Choice Quizzes** - Test knowledge with instant scoring and detailed explanations
 - **Interactive Flashcards** - Study with smooth flip animations and progress tracking
 - **Sequential Learning Flow** - Guided study experience from text → flashcards → quiz
 - **Detailed Review System** - Question-by-question breakdown with explanations
 
-### 📊 **Smart Progress Tracking**
-- **Study Streaks** - Track daily learning habits and maintain momentum
-- **Performance Analytics** - Monitor scores, study time, and improvement trends
-- **Favorites System** - Save and organize your most important study materials
-- **Recent Activity** - Timeline of your learning journey
-- **Spaced Repetition** - AI recommends optimal review timing based on performance
-
-### 🎨 **Modern User Experience**
+### **Modern User Experience**
 - **Glass Morphism Design** - Beautiful dark theme with blur effects and smooth animations
 - **Responsive Layout** - Perfect experience on desktop, tablet, and mobile
 - **Intuitive Navigation** - Clean interface with easy-to-use controls
 - **Real-time Feedback** - Instant notifications and progress updates
 - 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 ### **Frontend**
 - **HTML5** - Semantic markup and structure
@@ -52,43 +44,6 @@
 ### **Deployment**
 - **Vercel** - Serverless deployment platform
 - **Git** - Version control and continuous deployment
-
-
-## 🌟 Key Highlights
-
-### **AI Study Set Generation**
-- Input any topic and get comprehensive study materials
-- Text summaries written in natural, engaging language
-- 10 multiple-choice quiz questions with detailed explanations
-- 15 interactive flashcards for active recall
-
-### **Smart Learning Flow**
-- **Sequential Experience** - Text → Flashcards → Quiz
-- **Progress Tracking** - Real-time completion status
-- **Detailed Results** - Question-by-question review with explanations
-- **Performance Analytics** - Track improvement over time
-
-### **User-Friendly Design**
-- **Dark Theme** - Easy on the eyes for extended study sessions
-- **Glass Effects** - Modern aesthetic with backdrop blur
-- **Responsive Design** - Works perfectly on all devices
-- **Smooth Animations** - Polished interactions throughout
-
-## 🤝 Contributing
-
-We welcome contributions! Here's how to get started:
-
-1. **Fork the repository**
-2. **Create a feature branch** (`git checkout -b feature/AmazingFeature`)
-3. **Commit your changes** (`git commit -m 'Add some AmazingFeature'`)
-4. **Push to the branch** (`git push origin feature/AmazingFeature`)
-5. **Open a Pull Request**
-
-### **Development Guidelines**
-- Follow existing code style and patterns
-- Test thoroughly before submitting
-- Update documentation for new features
-- Keep commits focused and descriptive
 
 ## 📄 License
 
